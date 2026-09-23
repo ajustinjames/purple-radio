@@ -28,6 +28,8 @@ Can an Apple Watch Series 10 on watchOS 27 play one **live Twitch stream as audi
 
 This is a feasibility ranking, not an implementation or distribution decision. Do not treat a manually captured, expiring URL as a maintainable way to find streams.
 
+**Mini POC decision (2026-09-22):** The project owner approved testing the undocumented Twitch playback flow for this private feasibility experiment. Start with path A and record every undocumented dependency and the observed network behavior. This approval does not select a release mechanism or settle Twitch/App Store distribution permission.
+
 ## Recommended mini POC experiment
 
 1. **Preflight on a computer, for one known live channel.** Record how a candidate Twitch playlist was obtained and whether each step is documented or observed only. Inspect the multivariant and selected media playlist. Verify audio codec and container/track contents of **initialization and media segments**, sampling each distinct format and any discontinuity, including after a playlist refresh. Reject a muxed audio/video segment even if playback displays no picture. Do not save credentials, signed URLs, or captured content in the repository.
