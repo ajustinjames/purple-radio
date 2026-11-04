@@ -49,7 +49,7 @@ The decisive evidence is a **complete request and content inventory for the watc
 | Live source and path | Audible content follows one live Twitch channel for the test; the documented/undocumented source steps and any relay are recorded. | Prerecorded sample, unrelated feed, or an unexplained media source. |
 | Audio-only transfer | Complete watch request inventory contains only audio playlists and audio-only initialization/media segments; segment track inspection finds no video, across start and refresh. | Any video-bearing segment reaches the watch. **Unresolved** if requests or tracks cannot be fully observed. |
 | Wi-Fi independence | Watch uses its Wi-Fi and plays without the iPhone relaying audio or data. | Phone relay, cellular fallback, or network path cannot be established. |
-| Output routes | At least five continuous minutes of audible in-app playback through the **off-charger watch speaker** and five through **AirPods Pro 3**, with each route confirmed. | Either route cannot start or sustain playback. Record stalls and restarts; a restart does not count as continuous playback. |
+| Output routes | At least five continuous minutes of audible in-app playback through the **off-charger watch speaker** and five through **AirPods Pro 3**, with each route confirmed. | Either route cannot start or sustain playback. Record stalls and restarts; a restart does not count as continuous playback. **The owner dropped the five-minute duration on 2026-11-03; confirmed playback on each route now suffices.** |
 | Background (exploratory) | Record whether audio continues wrist down and at the watch face with normal audio setup. | Failure here does **not** fail the mini POC; carry it into the main POC. |
 
 A mini POC **technical pass** requires the first four rows to pass on the physical watch. A relay pass must be labeled as such. A result using a server that extracts audio from Twitch video is a **watch-only audio transfer result**, not proof that Twitch provided an audio-only rendition. An unavailable Twitch audio source, an unplayable source, or any video download is a technical failure for path A; an evidence gap is unresolved rather than a pass.
@@ -61,7 +61,7 @@ No candidate has been cleared for public release. Twitch's [developer documentat
 ## Decisions for review after the experiment
 
 - If direct audio-only Twitch HLS works only through undocumented access, is a relay worth testing further, or should this path stop pending Twitch support/permission?
-- Is the mini POC's five-minute-per-route threshold enough before investing in the main POC? Longer reliability targets belong to that stage.
+- ~~Is the mini POC's five-minute-per-route threshold enough before investing in the main POC?~~ Resolved 2026-11-03: the owner dropped the duration requirement for the mini POC. Reliability targets belong to the main POC.
 - If Series 10 speaker playback conflicts with Apple's long-form route setup, which foreground route configuration is acceptable for further investigation? Do not generalize one successful route to background playback.
 - Who will confirm Twitch and content-rights permission for a distributable audio-only player or relay? Keep that outcome separate from the technical result.
 
@@ -73,15 +73,15 @@ Tested on an Apple Watch Series 10 running watchOS 27.0. The experimental app an
 
 - **The experimental code stays out of the repository.** Only findings and decisions are recorded here.
 - **The watch resolves the source itself.** The owner chose not to open the Mac firewall for the path B relay, so the app requests the Twitch token, the usher multivariant playlist and the explicit AAC `audio_only` variant directly from the watch. It passes only that media playlist to `AVPlayer` and never falls back to a video variant. This is path A with no Mac dependency. The earlier build used the Mac for source discovery on both paths.
-- **The owner ended the smoke test on 2026-11-03** after foreground playback on both routes and background playback had worked. The remaining formal checks below are still open, not waived.
+- **The owner ended the smoke test on 2026-11-03** after foreground playback on both routes and background playback had worked. The owner also dropped the five-minute-per-route duration requirement: confirmed playback on each route counts as a pass for the mini POC, and sustained-playback reliability moves to the main POC. The other open checks below are not waived.
 
 ### Results
 
 | Criterion/check | Result | Evidence and limit |
 | --- | --- | --- |
 | Live source and path | **Pass (path A, watch-resolved)** | The watch obtained and played live audio for the most-watched live channel, chosen at Start. The source flow is undocumented and observed only. |
-| Off-charger speaker, long-form policy | **Partial pass** | The log showed `Speaker` as the route under `.longFormAudio` with no route prompt, so the Series 10 speaker satisfies long-form activation. This answers the route question above for foreground use. The longest uninterrupted run was about 3 minutes; 5 minutes was not reached. |
-| AirPods Pro 3 | **Partial pass** | The log showed `BluetoothA2DPOutput` as the route, including a switch during buffering without a restart. Playback was confirmed but not run for 5 continuous minutes. |
+| Off-charger speaker, long-form policy | **Pass** | The log showed `Speaker` as the route under `.longFormAudio` with no route prompt, so the Series 10 speaker satisfies long-form activation. This answers the route question above for foreground use. The longest uninterrupted run was about 3 minutes; the duration requirement was dropped. |
+| AirPods Pro 3 | **Pass** | The log showed `BluetoothA2DPOutput` as the route, including a switch during buffering without a restart. Playback was confirmed; the duration requirement was dropped. |
 | Background, exploratory | **Pass, about 72 seconds** | The first build declared `audio` under `WKBackgroundModes`, and playback paused about a minute after the app went to the background. After moving it to `UIBackgroundModes`, playback continued on AirPods for about 72 seconds at the watch face. It then paused when the AirPods disconnected, which is expected behavior. |
 | Stalls | One recovered stall | One 3-second stall recovered without a restart. Start-to-play took about 16–18 seconds when a pre-roll ad was served and about 1 second otherwise. |
 | Wi-Fi independence | **Unresolved** | The paired iPhone stayed on, so a phone relay was not excluded. |
@@ -104,6 +104,6 @@ Consequences:
 
 ### Remaining to meet the mini POC criteria
 
-- Run 5 uninterrupted minutes on each route with the iPhone powered off and watch cellular disabled.
+- Confirm playback with the iPhone powered off and watch cellular disabled, to establish Wi-Fi independence.
 - Decide whether path A's ad behavior fails the audio-only criterion outright or calls for an ad-free source. Otherwise, prove the relay path end to end, which requires the relay to be reachable from the watch.
 - Keep the [distribution questions](#distribution-is-a-separate-decision) separate. Nothing above changes them.
