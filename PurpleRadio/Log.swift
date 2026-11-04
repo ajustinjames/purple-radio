@@ -4,7 +4,7 @@ import OSLog
 /// App loggers. Never log tokens, signed URLs, or raw `NSError` descriptions:
 /// errors from networking and AVFoundation can embed signed URLs. Use `redacted(_:)`.
 enum Log {
-    private static let subsystem = Bundle.main.bundleIdentifier ?? "local.purpleradio.poc"
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "com.ajustinjames.purpleradio"
 
     static let playback = Logger(subsystem: subsystem, category: "Playback")
 

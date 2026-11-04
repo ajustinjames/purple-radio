@@ -1,9 +1,9 @@
-// Shared build settings for the main POC watch app.
+// Shared build settings for the watch app.
 // Signing stays out of this file and the project: copy Local.xcconfig.example
 // to Local.xcconfig (ignored by Git) for your team and, if needed, bundle ID.
 
 PRODUCT_NAME = PurpleRadio
-PRODUCT_BUNDLE_IDENTIFIER = local.purpleradio.poc
+PRODUCT_BUNDLE_IDENTIFIER = com.ajustinjames.purpleradio
 MARKETING_VERSION = 0.1
 CURRENT_PROJECT_VERSION = 1
 

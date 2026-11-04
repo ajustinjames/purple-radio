@@ -104,7 +104,7 @@ Consequences:
 
 ## Close-out — 2026-11-04
 
-The owner closed the mini POC with the following exceptions and decisions. They are tracked in the [Main POC milestone](https://github.com/ajustinjames/purple-radio/milestone/1).
+The owner closed the mini POC with the following exceptions and decisions. They are tracked in the [MVP milestone](https://github.com/ajustinjames/purple-radio/milestone/1), which replaced the planned main POC.
 
 - **Ads must be supported.** The app plays Twitch ads rather than blocking or stripping them, to stay on good terms with Twitch. Because the ads stitched into the `audio_only` rendition carry video, this conflicts with [PR-4](prd.md#product-requirements) as written. PR-4 is unchanged until the owner chooses an approach; approaches are tested in [#22](https://github.com/ajustinjames/purple-radio/issues/22).
 - **Audio-only transfer is not met.** It fails for path A whenever an ad is served and was not verified otherwise. This is accepted as a known exception pending #22, not a pass.

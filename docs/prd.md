@@ -1,6 +1,6 @@
 # Purple Radio: product requirements (draft)
 
-Status: draft for review. This document defines the intended product and the proof-of-concept checkpoints. It does not select a Twitch playback mechanism or approve one for distribution. [Brainstorming notes](brainstorming.md) retain the discussion and open ideas.
+Status: draft for review. This document defines the intended product and its build stages. It does not select a Twitch playback mechanism or approve one for distribution. [Brainstorming notes](brainstorming.md) retain the discussion and open ideas.
 
 ## Purpose
 
@@ -30,27 +30,27 @@ The first audience is a viewer who already follows channels on Twitch and wants 
 
 The initial experience does not include video, chat, search, broader discovery, following or unfollowing channels, or creator/account management. It does not need an iPhone app.
 
-## Validation stages
+## Build stages
 
 ### Mini POC: media feasibility
 
 On the available Apple Watch Series 10 cellular running watchOS 27, play one known live Twitch stream's **audio-only feed over Wi-Fi**. Demonstrate that no video segments are transferred. Test playback through both the watch speaker, while off the charger, and AirPods Pro 3. Record the media path and dependencies.
 
-Try background playback using watchOS's standard audio-session support. If that needs additional live-stream work, working in-app playback still passes the mini POC; carry the background work into the main POC. Sign-in, followed streams, and cellular are outside this stage.
+Try background playback using watchOS's standard audio-session support. If that needs additional live-stream work, working in-app playback still passes the mini POC; carry the background work forward. Sign-in, followed streams, and cellular are outside this stage.
 
 Status: **closed 2026-11-04 with exceptions.** Speaker, AirPods and background playback worked. Audio-only transfer was not met because of ads, and Wi-Fi independence was deferred. See the [close-out](mini-poc-audio-feasibility.md#close-out--2026-11-04).
 
-### Main POC: complete listening loop
+### MVP: complete listening loop
 
-On the same physical watch, demonstrate QR-based Twitch sign-in, a live-followed-streams view, an empty state when no followed channels are live, selection of a stream, and audio-only playback over both Wi-Fi and the watch's cellular connection. Test the watch speaker, AirPods Pro 3, and listening after leaving the app. Record what happens when a stream ends, the network changes, or audio is interrupted; acceptable recovery behavior still needs definition.
+The MVP is the first draft of the app itself, not another proof of concept. It replaces the planned main POC (owner decision, 2026-11-04). Its code is the app's codebase and should be built to be maintained and extended.
 
-Network-independence testing (Wi-Fi with the iPhone off, and cellular) is deferred to the MVP build ([#25](https://github.com/ajustinjames/purple-radio/issues/25)). The main POC is tracked in the [Main POC milestone](https://github.com/ajustinjames/purple-radio/milestone/1).
+On the same physical watch, the MVP delivers QR-based Twitch sign-in, a live-followed-streams view, an empty state when no followed channels are live, selection of a stream, and audio playback over both Wi-Fi and the watch's cellular connection. Test the watch speaker, AirPods Pro 3, and listening after leaving the app. Define and implement what happens when a stream ends, the network changes, or audio is interrupted ([#24](https://github.com/ajustinjames/purple-radio/issues/24)). Network-independence testing (Wi-Fi with the iPhone off, and cellular) is part of the MVP ([#25](https://github.com/ajustinjames/purple-radio/issues/25)).
 
-POC code is experimental. A successful POC establishes feasibility, not the final app architecture or permission to distribute it.
+The MVP is tracked in the [MVP milestone](https://github.com/ajustinjames/purple-radio/milestone/1). A working MVP doesn't approve public distribution: its playback relies on undocumented Twitch behavior, and the distribution review follows the MVP.
 
 ## Separate distribution decision
 
-The App Store path needs its own review of Twitch's rules, the chosen media-access method, and Apple's requirements. An experimental playback method may be used to learn in the POCs, but a public release requires a documented, supportable conclusion about that method. Keep this decision separate from whether the POCs work technically.
+The App Store path needs its own review of Twitch's rules, the chosen media-access method, and Apple's requirements. An experimental playback method may be used in the mini POC and the MVP, but a public release requires a documented, supportable conclusion about that method. Keep this decision separate from whether the app works technically.
 
 ## Open decisions and feasibility risks
 
@@ -61,4 +61,4 @@ The App Store path needs its own review of Twitch's rules, the chosen media-acce
 - What playback duration and recovery behavior count as acceptable for a release.
 - Whether the media-access path is permitted and maintainable for App Store distribution. Reviewed after the MVP is built ([#16](https://github.com/ajustinjames/purple-radio/issues/16)).
 
-These questions should be answered through feasibility research and POC evidence before the HLD is finalized. LLDs can follow when individual components are ready to implement.
+These questions should be answered through feasibility research, mini POC evidence, and MVP testing before the HLD is finalized. LLDs can follow when individual components are ready to implement.
