@@ -1,6 +1,6 @@
 # Mini POC feasibility: Twitch live audio on Apple Watch
 
-Status: research and proposed experiment, 2026-09-22. No watch playback has been tested. This document addresses the [draft PRD's mini POC](prd.md#mini-poc-media-feasibility), not the main POC or an app design.
+Status: research 2026-09-22; physical-watch smoke test 2026-11-03 (see [results](#physical-watch-smoke-test--2026-11-03)). The formal mini POC criteria are not yet all met. This document addresses the [draft PRD's mini POC](prd.md#mini-poc-media-feasibility), not the main POC or an app design.
 
 ## Question and current finding
 
@@ -64,3 +64,46 @@ No candidate has been cleared for public release. Twitch's [developer documentat
 - Is the mini POC's five-minute-per-route threshold enough before investing in the main POC? Longer reliability targets belong to that stage.
 - If Series 10 speaker playback conflicts with Apple's long-form route setup, which foreground route configuration is acceptable for further investigation? Do not generalize one successful route to background playback.
 - Who will confirm Twitch and content-rights permission for a distributable audio-only player or relay? Keep that outcome separate from the technical result.
+
+## Physical-watch smoke test — 2026-11-03
+
+Tested on an Apple Watch Series 10 running watchOS 27.0. The experimental app and Python relay stay local and are not in Git, per the owner's decision. Nothing here selects a release architecture or settles distribution permission.
+
+### Decisions
+
+- **The experimental code stays out of the repository.** Only findings and decisions are recorded here.
+- **The watch resolves the source itself.** The owner chose not to open the Mac firewall for the path B relay, so the app requests the Twitch token, the usher multivariant playlist and the explicit AAC `audio_only` variant directly from the watch. It passes only that media playlist to `AVPlayer` and never falls back to a video variant. This is path A with no Mac dependency. The earlier build used the Mac for source discovery on both paths.
+- **The owner ended the smoke test on 2026-11-03** after foreground playback on both routes and background playback had worked. The remaining formal checks below are still open, not waived.
+
+### Results
+
+| Criterion/check | Result | Evidence and limit |
+| --- | --- | --- |
+| Live source and path | **Pass (path A, watch-resolved)** | The watch obtained and played live audio for the most-watched live channel, chosen at Start. The source flow is undocumented and observed only. |
+| Off-charger speaker, long-form policy | **Partial pass** | The log showed `Speaker` as the route under `.longFormAudio` with no route prompt, so the Series 10 speaker satisfies long-form activation. This answers the route question above for foreground use. The longest uninterrupted run was about 3 minutes; 5 minutes was not reached. |
+| AirPods Pro 3 | **Partial pass** | The log showed `BluetoothA2DPOutput` as the route, including a switch during buffering without a restart. Playback was confirmed but not run for 5 continuous minutes. |
+| Background, exploratory | **Pass, about 72 seconds** | The first build declared `audio` under `WKBackgroundModes`, and playback paused about a minute after the app went to the background. After moving it to `UIBackgroundModes`, playback continued on AirPods for about 72 seconds at the watch face. It then paused when the AirPods disconnected, which is expected behavior. |
+| Stalls | One recovered stall | One 3-second stall recovered without a restart. Start-to-play took about 16–18 seconds when a pre-roll ad was served and about 1 second otherwise. |
+| Wi-Fi independence | **Unresolved** | The paired iPhone stayed on, so a phone relay was not excluded. |
+| Audio-only transfer | **Fail expected for path A; unverified** | See the ad finding below. The watch's requests were not captured. |
+
+### Twitch serves video inside the audio-only rendition during ads
+
+Computer inspection on 2026-11-03 found that Twitch stitches pre-roll ads into the `audio_only` media playlist. Those segments are labeled `Amazon` in `#EXTINF` and contain **H.264 video** alongside AAC and timed ID3, according to `ffprobe`. On a fresh session, about 30 seconds of these segments appeared before audio-only live segments resumed. Mid-roll ads were not observed but should be assumed to behave the same way.
+
+Consequences:
+
+- **Path A, direct to `AVPlayer`, cannot meet the audio-only transfer criterion whenever an ad is served.** The player downloads every segment in the media playlist, and it cannot skip video-bearing segments.
+- **Path B, the relay, can refuse ad segments,** and the verifier now waits out the pre-roll instead of failing at startup. During a mid-roll ad, refusing segments would probably appear on the watch as a stall.
+- Ad-free access, such as a signed-in viewer with an ad-free entitlement, was not tested.
+
+### Other source behavior observed
+
+- **New `#EXT-X-START` tag.** Twitch now includes this tag in the audio-only playlist. It has no URI and only sets the start offset, so the relay's tag allowlist accepts it.
+- **Offline channels return 404.** Usher returns HTTP 404 for a channel that is not live, and the watch reports this as `NSURLErrorDomain -1011`. Several channels went offline during testing, so a hardcoded test channel is unreliable.
+
+### Remaining to meet the mini POC criteria
+
+- Run 5 uninterrupted minutes on each route with the iPhone powered off and watch cellular disabled.
+- Decide whether path A's ad behavior fails the audio-only criterion outright or calls for an ad-free source. Otherwise, prove the relay path end to end, which requires the relay to be reachable from the watch.
+- Keep the [distribution questions](#distribution-is-a-separate-decision) separate. Nothing above changes them.
