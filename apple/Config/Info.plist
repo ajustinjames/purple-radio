@@ -20,6 +20,8 @@
 	<true/>
 	<key>WKWatchOnly</key>
 	<true/>
+	<key>TwitchClientID</key>
+	<string>$(TWITCH_CLIENT_ID)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

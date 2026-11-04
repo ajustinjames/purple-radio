@@ -7,6 +7,6 @@ A standalone Apple Watch app for listening to live Twitch streams as audio. See 
 | Path | Contents |
 | --- | --- |
 | [`apple/`](apple/README.md) | Apple Watch app (Xcode project, watchOS 27) |
-| [`docs/`](docs) | Product requirements, feasibility findings, and design notes |
+| [`docs/`](docs) | Product requirements, architecture, feasibility findings, and design notes |
 
 Each platform directory is a self-contained build with its own README and `.gitignore`. Another platform's app would go in a sibling directory.

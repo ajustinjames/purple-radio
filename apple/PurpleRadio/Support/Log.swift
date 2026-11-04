@@ -6,6 +6,8 @@ import OSLog
 enum Log {
     private static let subsystem = Bundle.main.bundleIdentifier ?? "com.ajustinjames.purpleradio"
 
+    static let signIn = Logger(subsystem: subsystem, category: "SignIn")
+    static let twitch = Logger(subsystem: subsystem, category: "Twitch")
     static let playback = Logger(subsystem: subsystem, category: "Playback")
 
     /// The error's domain and code only.

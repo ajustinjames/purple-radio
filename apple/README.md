@@ -4,8 +4,8 @@ Watch-only SwiftUI app for watchOS 27, with no iPhone companion app.
 
 ## Layout
 
-- `PurpleRadio/` holds the app's Swift sources. It's a synchronized folder, so Xcode adds new files to the target automatically.
-- `Config/Config.xcconfig` holds the shared build settings. `Config/Info.plist` holds the app's Info.plist.
+- `PurpleRadio/` holds the app's Swift sources, grouped by feature as described in the [architecture note](../docs/architecture.md). It's a synchronized folder, so Xcode adds new files to the target automatically.
+- `Config/Config.xcconfig` holds the shared build settings, including `TWITCH_CLIENT_ID`. `Config/Info.plist` holds the app's Info.plist.
 - `Config/Local.xcconfig` is optional, ignored by Git, and holds your signing settings.
 
 ## Run on the watch

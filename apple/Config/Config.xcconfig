@@ -10,6 +10,10 @@ CURRENT_PROJECT_VERSION = 1
 INFOPLIST_FILE = Config/Info.plist
 GENERATE_INFOPLIST_FILE = NO
 
+// Twitch application client ID (#19). Not a secret for a public client; commit it
+// here once the app is registered. Read at runtime through Info.plist.
+TWITCH_CLIENT_ID =
+
 SDKROOT = watchos
 SUPPORTED_PLATFORMS = watchos watchsimulator
 TARGETED_DEVICE_FAMILY = 4

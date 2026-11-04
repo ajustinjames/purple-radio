@@ -5,6 +5,7 @@ Purple Radio is a standalone Apple Watch app for listening to live Twitch stream
 ## Start here
 
 - Read [the draft PRD](docs/prd.md) for intended behavior and build stages.
+- Read [the architecture note](docs/architecture.md) before changing the app's structure.
 - Read [brainstorming notes](docs/brainstorming.md) for decisions still under discussion.
 - Follow [the AI policy](AI_POLICY.md) for all contributions.
 
