@@ -1,6 +1,6 @@
 # Agent guidance
 
-Purple Radio is a planned, standalone Apple Watch app for listening to live Twitch streams as audio. The repository is in the planning stage; there is no app implementation yet.
+Purple Radio is a planned, standalone Apple Watch app for listening to live Twitch streams as audio. The main POC watch app lives in [`MainPOC/`](MainPOC/README.md); there is no release implementation yet.
 
 ## Start here
 

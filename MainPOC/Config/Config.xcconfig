@@ -1,0 +1,22 @@
+// Shared build settings for the main POC watch app.
+// Signing stays out of this file and the project: copy Local.xcconfig.example
+// to Local.xcconfig (ignored by Git) for your team and, if needed, bundle ID.
+
+PRODUCT_NAME = PurpleRadio
+PRODUCT_BUNDLE_IDENTIFIER = local.purpleradio.poc
+MARKETING_VERSION = 0.1
+CURRENT_PROJECT_VERSION = 1
+
+INFOPLIST_FILE = Config/Info.plist
+GENERATE_INFOPLIST_FILE = NO
+
+SDKROOT = watchos
+SUPPORTED_PLATFORMS = watchos watchsimulator
+TARGETED_DEVICE_FAMILY = 4
+WATCHOS_DEPLOYMENT_TARGET = 27.0
+
+SWIFT_VERSION = 6.0
+SWIFT_EMIT_LOC_STRINGS = NO
+CODE_SIGN_STYLE = Automatic
+
+#include? "Local.xcconfig"

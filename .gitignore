@@ -1,0 +1,13 @@
+# Xcode
+DerivedData/
+.build/
+xcuserdata/
+*.xcuserstate
+
+# Local signing settings
+MainPOC/Config/Local.xcconfig
+
+# Local working notes
+MINI_POC_HANDOFF.md
+
+.DS_Store

@@ -1,0 +1,4 @@
+// Copy to Local.xcconfig (ignored by Git). Optional; otherwise choose a team in Xcode,
+// but don't commit the resulting DEVELOPMENT_TEAM change to the project.
+// DEVELOPMENT_TEAM = YOURTEAMID
+// PRODUCT_BUNDLE_IDENTIFIER = com.example.purpleradio.poc
