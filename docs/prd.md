@@ -26,6 +26,8 @@ The first audience is a viewer who already follows channels on Twitch and wants 
 | PR-5 | Playback works over Wi-Fi and the watch's own cellular connection, without relying on an iPhone to relay the stream. |
 | PR-6 | Playback works through the supported watch speaker and paired AirPods. Background listening is part of the intended app experience. |
 
+**PR-4 and ads (2026-11-04):** the app must play Twitch ads rather than block or strip them. The mini POC found that ads stitched into Twitch's audio-only rendition contain video, so PR-4 cannot currently be met during ads. PR-4 stays as written until the owner chooses an approach from [#22](https://github.com/ajustinjames/purple-radio/issues/22). See the [mini POC close-out](mini-poc-audio-feasibility.md#close-out--2026-11-04).
+
 The initial experience does not include video, chat, search, broader discovery, following or unfollowing channels, or creator/account management. It does not need an iPhone app.
 
 ## Validation stages
@@ -36,9 +38,13 @@ On the available Apple Watch Series 10 cellular running watchOS 27, play one kno
 
 Try background playback using watchOS's standard audio-session support. If that needs additional live-stream work, working in-app playback still passes the mini POC; carry the background work into the main POC. Sign-in, followed streams, and cellular are outside this stage.
 
+Status: **closed 2026-11-04 with exceptions.** Speaker, AirPods and background playback worked. Audio-only transfer was not met because of ads, and Wi-Fi independence was deferred. See the [close-out](mini-poc-audio-feasibility.md#close-out--2026-11-04).
+
 ### Main POC: complete listening loop
 
 On the same physical watch, demonstrate QR-based Twitch sign-in, a live-followed-streams view, an empty state when no followed channels are live, selection of a stream, and audio-only playback over both Wi-Fi and the watch's cellular connection. Test the watch speaker, AirPods Pro 3, and listening after leaving the app. Record what happens when a stream ends, the network changes, or audio is interrupted; acceptable recovery behavior still needs definition.
+
+Network-independence testing (Wi-Fi with the iPhone off, and cellular) is deferred to the MVP build ([#25](https://github.com/ajustinjames/purple-radio/issues/25)). The main POC is tracked in the [Main POC milestone](https://github.com/ajustinjames/purple-radio/milestone/1).
 
 POC code is experimental. A successful POC establishes feasibility, not the final app architecture or permission to distribute it.
 
@@ -49,9 +55,10 @@ The App Store path needs its own review of Twitch's rules, the chosen media-acce
 ## Open decisions and feasibility risks
 
 - How to obtain a stable, truly audio-only feed for a live Twitch stream on watchOS.
+- How to play Twitch ads, which the app must support, when ads in the audio-only rendition carry video ([#22](https://github.com/ajustinjames/purple-radio/issues/22)).
 - How QR sign-in, credential storage, renewal, and sign-out should work without a companion app.
 - Whether the chosen playback path supports long-running background audio and route changes reliably.
 - What playback duration and recovery behavior count as acceptable for a release.
-- Whether the media-access path is permitted and maintainable for App Store distribution.
+- Whether the media-access path is permitted and maintainable for App Store distribution. Reviewed after the MVP is built ([#16](https://github.com/ajustinjames/purple-radio/issues/16)).
 
 These questions should be answered through feasibility research and POC evidence before the HLD is finalized. LLDs can follow when individual components are ready to implement.
