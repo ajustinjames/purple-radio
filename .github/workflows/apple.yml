@@ -1,0 +1,61 @@
+name: Apple Watch app
+
+on:
+  pull_request:
+    paths:
+      - "apple/**"
+      - ".github/workflows/apple.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apple/**"
+      - ".github/workflows/apple.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apple-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    # Xcode 27 is only on the preview image for now (actions/runner-images#14404).
+    runs-on: xcode-27
+    timeout-minutes: 45
+    env:
+      PROJECT: apple/PurpleRadio/PurpleRadio.xcodeproj
+      SCHEME: PurpleRadio Watch App
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build for device
+        run: >
+          xcodebuild build -project "$PROJECT" -scheme "$SCHEME"
+          -destination 'generic/platform=watchOS'
+          CODE_SIGNING_ALLOWED=NO
+
+      # The image lists watch simulators but doesn't install their runtime.
+      - name: Install the watchOS simulator runtime
+        run: |
+          if ! xcrun simctl list runtimes available | grep -q '^watchOS'; then
+            xcodebuild -downloadPlatform watchOS
+          fi
+          xcrun simctl list runtimes available
+
+      - name: Pick a watch simulator
+        run: |
+          id=$(xcrun simctl list devices available --json \
+            | jq -r '[.devices | to_entries[] | select(.key | contains("watchOS")) | .value[]][0].udid')
+          test -n "$id" && test "$id" != null
+          echo "SIMULATOR_ID=$id" >> "$GITHUB_ENV"
+
+      - name: Run unit tests
+        run: >
+          xcodebuild test -project "$PROJECT" -scheme "$SCHEME"
+          -destination "id=$SIMULATOR_ID"
+          -only-testing:"PurpleRadio Watch AppTests"
+          CODE_SIGNING_ALLOWED=NO

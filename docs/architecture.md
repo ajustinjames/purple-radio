@@ -4,7 +4,7 @@ Status: first draft for the MVP ([#29](https://github.com/ajustinjames/purple-ra
 
 ## Source layout
 
-The Apple Watch app's sources live in `apple/PurpleRadio/`, grouped by feature:
+The Apple Watch app's sources live in `apple/PurpleRadio/PurpleRadio Watch App/`, grouped by feature. It's a synchronized folder, so new files and folders join the app target without project file edits:
 
 | Folder | Contents |
 | --- | --- |
@@ -15,6 +15,8 @@ The Apple Watch app's sources live in `apple/PurpleRadio/`, grouped by feature:
 | `Playback/` | `AudioSession`, the player, Now Playing, and stream resolution ([#21](https://github.com/ajustinjames/purple-radio/issues/21), [#23](https://github.com/ajustinjames/purple-radio/issues/23)). |
 | `Playback/Source/` | The **only** code that calls undocumented Twitch endpoints (`gql.twitch.tv`, usher). Add it with #21. |
 | `Support/` | Logging and `AppConfiguration`. |
+
+The asset catalog stays at the top of the folder.
 
 Keep the undocumented playback flow inside `Playback/Source/`. Its output is an audio-only media playlist URL for a `LiveStream`. Nothing else should depend on how that URL was obtained, so the flow can be replaced or removed after the [distribution review](https://github.com/ajustinjames/purple-radio/issues/16).
 
@@ -32,11 +34,13 @@ Keep the undocumented playback flow inside `Playback/Source/`. Its output is an 
 
 ## Concurrency
 
-The project uses Swift 6 language mode with strict concurrency. UI state and models run on the main actor. Networking, Keychain access, and playlist parsing run off the main actor in `Sendable` services and return results to the models.
+The project uses Swift 6 language mode with strict concurrency. The app target keeps the template's defaults: main-actor isolation by default and approachable concurrency. So views and models are on the main actor without annotations.
+
+Networking, Keychain access, and playlist parsing run off the main actor in `Sendable` services and return results to the models. Declare those services, the data types they pass around (such as `TwitchCredentials` and `LiveStream`), and their protocols `nonisolated`. Otherwise their conformances, including `Codable`, are tied to the main actor and can't be used from a service.
 
 ## Configuration
 
-`apple/Config/Config.xcconfig` holds settings shared by the app and test targets, including `TWITCH_CLIENT_ID`. A public client's ID isn't a secret, so it's committed there once the Twitch app is registered. `Info.plist` passes it to `AppConfiguration`. Signing settings stay in the ignored `Local.xcconfig`.
+`apple/PurpleRadio/Config/Config.xcconfig` is the base configuration for every target and holds `TWITCH_CLIENT_ID`. A public client's ID isn't a secret, so it's committed there once the Twitch app is registered. `Config/Info.plist` passes it to `AppConfiguration`. Signing settings stay in the ignored `Local.xcconfig`.
 
 ## Logging and secrets
 
@@ -46,4 +50,4 @@ The project uses Swift 6 language mode with strict concurrency. UI state and mod
 
 ## Testing
 
-Unit tests in `apple/PurpleRadioTests/` use Swift Testing and run in CI on the watch simulator. They cover logic that doesn't need a device: playlist parsing and variant selection, Helix response decoding, and token expiry handling. Feature models are tested with fake services. Playback, audio routes, and background behavior are checked on the physical watch.
+Unit tests in `apple/PurpleRadio/PurpleRadio Watch AppTests/` use Swift Testing and run in CI on the watch simulator. They cover logic that doesn't need a device: playlist parsing and variant selection, Helix response decoding, and token expiry handling. Feature models are tested with fake services. Playback, audio routes, and background behavior are checked on the physical watch.

@@ -1,0 +1,13 @@
+// Project-wide build settings, the base configuration for every target.
+// Signing stays out of this file and the project: copy Local.xcconfig.example to
+// Local.xcconfig (ignored by Git) for your team and, if needed, bundle ID prefix.
+
+// Every target's bundle ID starts with this. The watch app's ID must extend the
+// container's, so override the prefix rather than individual IDs.
+BUNDLE_ID_PREFIX = com.ajustinjames
+
+// Twitch application client ID (#19). Not a secret for a public client; commit it
+// here once the app is registered. The app reads it through Info.plist.
+TWITCH_CLIENT_ID =
+
+#include? "Local.xcconfig"

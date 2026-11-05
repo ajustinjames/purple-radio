@@ -6,4 +6,4 @@ xcuserdata/
 *.xcuserstate
 
 # Local signing settings
-Config/Local.xcconfig
+PurpleRadio/Config/Local.xcconfig
