@@ -38,22 +38,19 @@ jobs:
           -destination 'generic/platform=watchOS'
           CODE_SIGNING_ALLOWED=NO
 
-      # The image lists watch simulators but doesn't install their runtime.
-      - name: Install the watchOS simulator runtime
+      # The image's watchOS runtime isn't always mounted when the job starts, and its
+      # preinstalled watch simulators show as unavailable, so create one.
+      - name: Create a watch simulator
         run: |
-          xcrun simctl list runtimes
-          xcrun simctl runtime list -v
-          xcrun simctl runtime match list
           if ! xcrun simctl list runtimes available | grep -q '^watchOS'; then
             xcodebuild -downloadPlatform watchOS
           fi
-          xcrun simctl list runtimes available
-
-      - name: Pick a watch simulator
-        run: |
-          id=$(xcrun simctl list devices available --json \
-            | jq -r '[.devices | to_entries[] | select(.key | contains("watchOS")) | .value[]][0].udid')
-          test -n "$id" && test "$id" != null
+          runtime=$(xcrun simctl list runtimes available --json \
+            | jq -c '[.runtimes[] | select(.platform == "watchOS")] | first')
+          runtime_id=$(jq -r '.identifier' <<< "$runtime")
+          device_type=$(jq -r '.supportedDeviceTypes | map(select(.productFamily == "Apple Watch")) | first | .identifier' <<< "$runtime")
+          echo "Runtime: $runtime_id, device type: $device_type"
+          id=$(xcrun simctl create "CI Watch" "$device_type" "$runtime_id")
           echo "SIMULATOR_ID=$id" >> "$GITHUB_ENV"
 
       - name: Run unit tests
