@@ -44,23 +44,41 @@ jobs:
           CODE_SIGNING_ALLOWED=NO
           | xcbeautify --renderer github-actions
 
-      # The image's watchOS runtime is still mounting when the job starts, so wait for
-      # it. Its preinstalled watch simulators show as unavailable, so create one.
-      - name: Create a watch simulator
+      # Workaround for the preview image, adapted from EnO33/foulee#462: a fresh runner
+      # is still installing its watchOS runtime when the job starts, so the runtime
+      # comes and goes. Wait until it settles, let Xcode pick the simulator (creating
+      # one if none is eligible), and boot it before the tests start.
+      - name: Pick and boot a watch simulator
         run: |
-          if ! xcrun simctl runtime list | grep -q '^watchOS'; then
-            xcodebuild -downloadPlatform watchOS
-          fi
-          for _ in $(seq 60); do
-            xcrun simctl list runtimes available | grep -q '^watchOS' && break
-            sleep 5
+          watch_runtime_settled() {
+            xcrun simctl runtime list -j | jq -e '
+              [to_entries[] | select(.value.platformIdentifier | test("watch"; "i")) | .value.state]
+              | any(. == "Ready") and all(test("ing$") | not)' > /dev/null
+          }
+          for _ in $(seq 18); do
+            watch_runtime_settled && break
+            echo "Waiting for the watchOS runtime to finish installing"
+            sleep 10
           done
-          runtime=$(xcrun simctl list runtimes available --json \
-            | jq -c '[.runtimes[] | select(.platform == "watchOS")] | first')
-          runtime_id=$(jq -r '.identifier' <<< "$runtime")
-          device_type=$(jq -r '.supportedDeviceTypes | map(select(.productFamily == "Apple Watch")) | first | .identifier' <<< "$runtime")
-          echo "Runtime: $runtime_id, device type: $device_type"
-          id=$(xcrun simctl create "CI Watch" "$device_type" "$runtime_id")
+          eligible_watch() {
+            xcodebuild -project "$PROJECT" -scheme "$SCHEME" -showdestinations 2> /dev/null \
+              | awk '/Ineligible destinations/ { exit } /platform:watchOS Simulator/ && !/placeholder/' \
+              | sed -n 's/.*id:\([^,]*\),.*/\1/p' | head -1
+          }
+          id=$(eligible_watch)
+          if [ -z "$id" ]; then
+            runtime=$(xcrun simctl list runtimes available -j \
+              | jq -c '[.runtimes[] | select(.platform == "watchOS")] | sort_by(.version) | last')
+            device_type=$(jq -r '[.supportedDeviceTypes[] | select(.productFamily == "Apple Watch")] | last | .identifier' <<< "$runtime")
+            xcrun simctl create "CI Watch" "$device_type" "$(jq -r .identifier <<< "$runtime")"
+            id=$(eligible_watch)
+          fi
+          if [ -z "$id" ]; then
+            echo "No watchOS simulator that Xcode accepts"
+            xcrun simctl runtime list -v || true
+            exit 1
+          fi
+          xcrun simctl bootstatus "$id" -b
           echo "SIMULATOR_ID=$id" >> "$GITHUB_ENV"
 
       - name: Run unit tests
