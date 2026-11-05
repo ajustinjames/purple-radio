@@ -200,7 +200,7 @@
     display: grid; place-items: center;
     font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9);
   }
-  .avatar.lg { width: 46px; height: 46px; font-size: 17px; }
+  .avatar.lg { width: 40px; height: 40px; font-size: 15px; }
   .row .meta { min-width: 0; flex: 1; }
   .row .name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .row .sub { font-size: 13px; color: var(--label-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -222,7 +222,13 @@
   .pill.ad { background: var(--ad); color: #000; }
   .pill.muted { background: var(--button); color: var(--label-2); }
   .np-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; margin-top: 2px; }
-  .np-head .title { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-head .title { max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-line {
+    display: flex; gap: 5px; align-items: center; justify-content: center;
+    max-width: 170px; font-size: 12px; color: var(--label-2);
+  }
+  .np-line > span:last-child:not(.pill) { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-line .pill { flex: none; }
   .np-controls {
     position: absolute; left: 0; right: 0; bottom: 14px;
     display: flex; align-items: center; justify-content: space-between;
@@ -252,7 +258,6 @@
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 65%;
     background: var(--accent);
   }
-  .route { font-size: 12px; color: var(--label-2); margin-top: 6px; }
 
   .notes-box {
     max-width: 1200px; margin: 0 auto; padding: 24px 32px 48px;
@@ -370,7 +375,7 @@
       <figcaption>
         <strong>4. Sign-in error</strong>
         <ul>
-          <li>Network failure, or the listener denied access in the browser.</li>
+          <li>Network failure. If the listener denies access in the browser, say “Sign-in was cancelled” instead.</li>
         </ul>
       </figcaption>
     </figure>
@@ -410,23 +415,19 @@
         <div class="body">
           <div class="row">
             <div class="avatar" style="background:#5b7cfa">MO</div>
-            <div class="meta"><div class="name">MossyOwl</div><div class="sub">Just Chatting</div></div>
-            <div class="viewers">1.2K</div>
+            <div class="meta"><div class="name">MossyOwl</div><div class="sub"><span class="viewers">1.2K</span> · Just Chatting</div></div>
           </div>
           <div class="row">
             <div class="avatar" style="background:#e0795a">QK</div>
-            <div class="meta"><div class="name">QuietKettle</div><div class="sub">Music</div></div>
-            <div class="viewers">318</div>
+            <div class="meta"><div class="name">QuietKettle</div><div class="sub"><span class="viewers">318</span> · Music</div></div>
           </div>
           <div class="row">
             <div class="avatar" style="background:#3fae8c">LP</div>
-            <div class="meta"><div class="name">LanternPilot</div><div class="sub">Talk Shows &amp; Podcasts</div></div>
-            <div class="viewers">87</div>
+            <div class="meta"><div class="name">LanternPilot</div><div class="sub"><span class="viewers">87</span> · Talk Shows &amp; Podcasts</div></div>
           </div>
           <div class="row">
             <div class="avatar" style="background:#c069c9">BR</div>
-            <div class="meta"><div class="name">BrambleRun</div><div class="sub">Chess</div></div>
-            <div class="viewers">42</div>
+            <div class="meta"><div class="name">BrambleRun</div><div class="sub"><span class="viewers">42</span> · Chess</div></div>
           </div>
         </div>
         <div class="scrollbar"></div>
@@ -434,8 +435,9 @@
       <figcaption>
         <strong>1. Live channels</strong>
         <ul>
-          <li>Name and category; the stream title is shown on Now Playing.</li>
+          <li>Name, then viewers and category. The stream title is shown on Now Playing.</li>
           <li>Circles stand in for channel images (Helix <code>profile_image_url</code>, if permitted).</li>
+          <li>Viewers share the second line so names keep their width on 42mm.</li>
           <li class="q">Keep the viewer count? <code>LiveStream</code> doesn't carry it yet.</li>
           <li class="q">Sort by viewers, or keep Twitch's order?</li>
         </ul>
@@ -448,23 +450,20 @@
         <div class="body">
           <div class="row playing">
             <div class="avatar" style="background:#5b7cfa">MO</div>
-            <div class="meta"><div class="name">MossyOwl</div><div class="sub">Just Chatting</div></div>
+            <div class="meta"><div class="name">MossyOwl</div><div class="sub"><span class="viewers">1.2K</span> · Just Chatting</div></div>
             <div class="eq"><i></i><i></i><i></i></div>
           </div>
           <div class="row">
             <div class="avatar" style="background:#e0795a">QK</div>
-            <div class="meta"><div class="name">QuietKettle</div><div class="sub">Music</div></div>
-            <div class="viewers">318</div>
+            <div class="meta"><div class="name">QuietKettle</div><div class="sub"><span class="viewers">318</span> · Music</div></div>
           </div>
           <div class="row">
             <div class="avatar" style="background:#3fae8c">LP</div>
-            <div class="meta"><div class="name">LanternPilot</div><div class="sub">Talk Shows &amp; Podcasts</div></div>
-            <div class="viewers">87</div>
+            <div class="meta"><div class="name">LanternPilot</div><div class="sub"><span class="viewers">87</span> · Talk Shows &amp; Podcasts</div></div>
           </div>
           <div class="row">
             <div class="avatar" style="background:#c069c9">BR</div>
-            <div class="meta"><div class="name">BrambleRun</div><div class="sub">Chess</div></div>
-            <div class="viewers">42</div>
+            <div class="meta"><div class="name">BrambleRun</div><div class="sub"><span class="viewers">42</span> · Chess</div></div>
           </div>
         </div>
         <div class="scrollbar"></div>
@@ -550,7 +549,7 @@
           <div class="np-head">
             <div class="avatar lg" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="caption"><span class="pill muted">CONNECTING</span></div>
+            <div class="np-line"><span class="pill muted">CONNECTING</span></div>
           </div>
         </div>
         <div class="np-controls">
@@ -575,8 +574,7 @@
           <div class="np-head">
             <div class="avatar lg" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="caption" style="max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">late night chat and a slow puzzle</div>
-            <div><span class="pill live">LIVE</span></div>
+            <div class="np-line"><span class="pill live">LIVE</span><span>late night chat and a slow puzzle</span></div>
           </div>
         </div>
         <div class="np-controls">
@@ -588,7 +586,7 @@
       <figcaption>
         <strong>2. Playing</strong>
         <ul>
-          <li>Channel, stream title and a LIVE badge. Long titles are truncated.</li>
+          <li>Channel, LIVE badge and stream title. Long titles are truncated.</li>
           <li>“Out” opens the system audio route picker: speaker or AirPods.</li>
           <li class="q">Use the system Now Playing view instead of a custom one?</li>
           <li class="q">Show the category here as well?</li>
@@ -603,8 +601,7 @@
           <div class="np-head">
             <div class="avatar lg" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="caption">Stream resumes after the ad</div>
-            <div><span class="pill ad">AD</span></div>
+            <div class="np-line"><span class="pill ad">AD</span><span>Back after the ad</span></div>
           </div>
         </div>
         <div class="np-controls">
@@ -619,7 +616,7 @@
         <ul>
           <li>Ads play as served (<a href="https://github.com/ajustinjames/purple-radio/issues/22">#22</a>); the badge says why the stream isn't live audio.</li>
           <li>The bar by the Crown shows the volume while it turns.</li>
-          <li class="q">Can we detect ad segments reliably enough to show this badge?</li>
+          <li class="q">The mini POC saw ad segments labelled <code>Amazon</code> in <code>#EXTINF</code>. Is that reliable enough to drive this badge?</li>
         </ul>
       </figcaption>
     </figure>
@@ -631,7 +628,7 @@
           <div class="np-head">
             <div class="avatar lg" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="caption"><span class="pill muted">RECONNECTING</span></div>
+            <div class="np-line"><span class="pill muted">RECONNECTING</span></div>
           </div>
         </div>
         <div class="np-controls">
@@ -674,7 +671,7 @@
           <div class="np-head">
             <div class="avatar lg" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="caption">Stopped</div>
+            <div class="np-line">Stopped</div>
           </div>
         </div>
         <div class="np-controls">
