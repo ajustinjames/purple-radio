@@ -5,5 +5,5 @@ build/
 xcuserdata/
 *.xcuserstate
 
-# Local signing settings
-PurpleRadio/Config/Local.xcconfig
+# Local settings (signing, Twitch client ID), in any folder
+Local.xcconfig
