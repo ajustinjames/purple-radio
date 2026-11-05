@@ -7,7 +7,11 @@ struct AppConfiguration: Sendable {
     let twitchClientID: String?
 
     init(bundle: Bundle = .main) {
-        let value = bundle.object(forInfoDictionaryKey: "TwitchClientID") as? String
+        self.init(infoDictionary: bundle.infoDictionary ?? [:])
+    }
+
+    init(infoDictionary: [String: Any]) {
+        let value = infoDictionary["TwitchClientID"] as? String
         twitchClientID = value?.isEmpty == false ? value : nil
     }
 }

@@ -1,0 +1,45 @@
+name: Apple Watch app
+
+on:
+  pull_request:
+    paths:
+      - "apple/**"
+      - ".github/workflows/apple.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apple/**"
+      - ".github/workflows/apple.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apple-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    # Xcode 27 is only on the preview image for now (actions/runner-images#14404).
+    runs-on: xcode-27
+    timeout-minutes: 30
+    env:
+      PROJECT: apple/PurpleRadio.xcodeproj
+      SCHEME: PurpleRadio
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build for device
+        run: >
+          xcodebuild build -project "$PROJECT" -scheme "$SCHEME"
+          -destination 'generic/platform=watchOS'
+          CODE_SIGNING_ALLOWED=NO
+
+      - name: Test on simulator
+        run: >
+          xcodebuild test -project "$PROJECT" -scheme "$SCHEME"
+          -destination 'platform=watchOS Simulator,name=Apple Watch Series 12 (46mm)'
+          CODE_SIGNING_ALLOWED=NO

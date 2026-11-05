@@ -1,0 +1,12 @@
+// The PurpleRadio app target.
+#include "Config.xcconfig"
+
+PRODUCT_NAME = PurpleRadio
+PRODUCT_BUNDLE_IDENTIFIER = $(APP_BUNDLE_IDENTIFIER)
+MARKETING_VERSION = 0.1
+CURRENT_PROJECT_VERSION = 1
+
+INFOPLIST_FILE = Config/Info.plist
+GENERATE_INFOPLIST_FILE = NO
+
+#include? "Local.xcconfig"

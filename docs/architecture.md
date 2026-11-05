@@ -36,7 +36,7 @@ The project uses Swift 6 language mode with strict concurrency. UI state and mod
 
 ## Configuration
 
-`apple/Config/Config.xcconfig` holds shared settings, including `TWITCH_CLIENT_ID`. A public client's ID isn't a secret, so it's committed there once the Twitch app is registered. `Info.plist` passes it to `AppConfiguration`. Signing settings stay in the ignored `Local.xcconfig`.
+`apple/Config/Config.xcconfig` holds settings shared by the app and test targets, including `TWITCH_CLIENT_ID`. A public client's ID isn't a secret, so it's committed there once the Twitch app is registered. `Info.plist` passes it to `AppConfiguration`. Signing settings stay in the ignored `Local.xcconfig`.
 
 ## Logging and secrets
 
@@ -46,4 +46,4 @@ The project uses Swift 6 language mode with strict concurrency. UI state and mod
 
 ## Testing
 
-Unit tests ([#30](https://github.com/ajustinjames/purple-radio/issues/30)) cover logic that doesn't need a device: playlist parsing and variant selection, Helix response decoding, and token expiry handling. Feature models are tested with fake services. Playback, audio routes, and background behavior are checked on the physical watch.
+Unit tests in `apple/PurpleRadioTests/` use Swift Testing and run in CI on the watch simulator. They cover logic that doesn't need a device: playlist parsing and variant selection, Helix response decoding, and token expiry handling. Feature models are tested with fake services. Playback, audio routes, and background behavior are checked on the physical watch.

@@ -1,14 +1,9 @@
-// Shared build settings for the watch app.
-// Signing stays out of this file and the project: copy Local.xcconfig.example
-// to Local.xcconfig (ignored by Git) for your team and, if needed, bundle ID.
+// Build settings shared by the app and test targets. App.xcconfig and Tests.xcconfig
+// include this file. Signing stays out of shared config and the project: copy
+// Local.xcconfig.example to Local.xcconfig (ignored by Git) for your team and, if
+// needed, bundle ID.
 
-PRODUCT_NAME = PurpleRadio
-PRODUCT_BUNDLE_IDENTIFIER = com.ajustinjames.purpleradio
-MARKETING_VERSION = 0.1
-CURRENT_PROJECT_VERSION = 1
-
-INFOPLIST_FILE = Config/Info.plist
-GENERATE_INFOPLIST_FILE = NO
+APP_BUNDLE_IDENTIFIER = com.ajustinjames.purpleradio
 
 // Twitch application client ID (#19). Not a secret for a public client; commit it
 // here once the app is registered. Read at runtime through Info.plist.
@@ -22,5 +17,3 @@ WATCHOS_DEPLOYMENT_TARGET = 27.0
 SWIFT_VERSION = 6.0
 SWIFT_EMIT_LOC_STRINGS = NO
 CODE_SIGN_STYLE = Automatic
-
-#include? "Local.xcconfig"

@@ -5,20 +5,26 @@ Watch-only SwiftUI app for watchOS 27, with no iPhone companion app.
 ## Layout
 
 - `PurpleRadio/` holds the app's Swift sources, grouped by feature as described in the [architecture note](../docs/architecture.md). It's a synchronized folder, so Xcode adds new files to the target automatically.
-- `Config/Config.xcconfig` holds the shared build settings, including `TWITCH_CLIENT_ID`. `Config/Info.plist` holds the app's Info.plist.
+- `PurpleRadioTests/` holds unit tests, which use Swift Testing and run in the app on the watch simulator.
+- `Config/Config.xcconfig` holds settings shared by both targets, including `APP_BUNDLE_IDENTIFIER` and `TWITCH_CLIENT_ID`. `Config/App.xcconfig` and `Config/Tests.xcconfig` add the per-target settings. `Config/Info.plist` holds the app's Info.plist.
 - `Config/Local.xcconfig` is optional, ignored by Git, and holds your signing settings.
 
 ## Run on the watch
 
-1. Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig`, then set `DEVELOPMENT_TEAM`. Also set `PRODUCT_BUNDLE_IDENTIFIER` if your team needs a unique one. You can choose a team in Xcode instead, but don't commit the resulting project change.
+1. Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig`, then set `DEVELOPMENT_TEAM`. Also set `APP_BUNDLE_IDENTIFIER` if your team needs a unique one; the test bundle uses it with a `.tests` suffix. You can choose a team in Xcode instead, but don't commit the resulting project change.
 2. Open `PurpleRadio.xcodeproj`, choose the paired watch as the run destination, and press **Run**.
 
-To build without signing, from the repository root:
+To build without signing and run the unit tests, from the repository root:
 
 ```sh
-xcodebuild -project apple/PurpleRadio.xcodeproj -scheme PurpleRadio \
-  -destination 'generic/platform=watchOS' CODE_SIGNING_ALLOWED=NO build
+xcodebuild build -project apple/PurpleRadio.xcodeproj -scheme PurpleRadio \
+  -destination 'generic/platform=watchOS' CODE_SIGNING_ALLOWED=NO
+xcodebuild test -project apple/PurpleRadio.xcodeproj -scheme PurpleRadio \
+  -destination 'platform=watchOS Simulator,name=Apple Watch Series 12 (46mm)' \
+  CODE_SIGNING_ALLOWED=NO
 ```
+
+CI runs both on pull requests that change `apple/` ([workflow](../.github/workflows/apple.yml)). It uses GitHub's `xcode-27` runner image, which is still a preview.
 
 ## Lessons carried over from the mini POC
 
