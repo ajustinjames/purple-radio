@@ -10,15 +10,16 @@ Everything is in `PurpleRadio/`:
 - `PurpleRadio Watch App/` holds the app's Swift sources, grouped by feature as described in the [architecture note](../docs/architecture.md). It's a synchronized folder, so Xcode adds new files to the target automatically.
 - `PurpleRadio Watch AppTests/` holds unit tests, which use Swift Testing and run in the app on the watch simulator.
 - `PurpleRadio Watch AppUITests/` holds a launch smoke test, which uses XCTest.
-- `Config/Config.xcconfig` is the base configuration for every target. It holds `BUNDLE_ID_PREFIX` and `TWITCH_CLIENT_ID`. `Config/Info.plist` adds the keys Xcode doesn't generate: `UIBackgroundModes` and `TwitchClientID`.
-- `Config/Local.xcconfig` is optional, ignored by Git, and holds your signing settings.
+- `Config/Config.xcconfig` is the base configuration for every target. It holds `BUNDLE_ID_PREFIX` and an empty `TWITCH_CLIENT_ID`. `Config/Info.plist` adds the keys Xcode doesn't generate: `UIBackgroundModes` and `TwitchClientID`, which is the `$(TWITCH_CLIENT_ID)` build setting rather than a value.
+- `Config/Local.xcconfig` is optional, ignored by Git, and holds your signing settings and Twitch client ID.
 
 The `PurpleRadio` target is the template's empty iOS container that a watch-only app ships in; it has no code.
 
 ## Run on the watch
 
 1. Copy `PurpleRadio/Config/Local.xcconfig.example` to `PurpleRadio/Config/Local.xcconfig`, then set `DEVELOPMENT_TEAM`. If the bundle IDs are taken for your team, also set `BUNDLE_ID_PREFIX`. Don't choose a team in Xcode's Signing & Capabilities tab: that writes it into the project file.
-2. Open `PurpleRadio/PurpleRadio.xcodeproj`, choose the paired watch as the run destination, and press **Run**.
+2. Set `TWITCH_CLIENT_ID` in `Local.xcconfig` to your own Twitch app's client ID (see below). Without it the app builds and runs, but sign-in shows that it isn't configured.
+3. Open `PurpleRadio/PurpleRadio.xcodeproj`, choose the paired watch as the run destination, and press **Run**.
 
 To build without signing and run the unit tests, from the repository root:
 
@@ -33,6 +34,17 @@ xcodebuild test -project apple/PurpleRadio/PurpleRadio.xcodeproj \
 ```
 
 Drop `-only-testing` to run the UI tests too; they take a few minutes.
+
+### Register a Twitch app
+
+The repository doesn't include a Twitch client ID, so each developer and fork uses their own app. Otherwise your users would see someone else's app name when approving sign-in, and your traffic would count against their app's rate limits.
+
+1. Sign in to the [Twitch developer console](https://dev.twitch.tv/console) and choose **Register Your Application**. Twitch requires two-factor authentication on the account.
+2. Enter a name. For **OAuth Redirect URLs**, enter `http://localhost:3000`. The device code flow sign-in uses doesn't redirect, but the console requires a URL.
+3. Set **Client Type** to **Public**. A public client has no client secret, and the app never needs one.
+4. Choose a category, create the app, then open **Manage** and copy the **Client ID** into `TWITCH_CLIENT_ID` in `Local.xcconfig`.
+
+The unit tests don't call Twitch, so neither they nor CI need a client ID. If a CI job ever does, pass it from a GitHub Actions variable or secret as `TWITCH_CLIENT_ID=...` on the `xcodebuild` command line; don't commit it.
 
 CI runs the build and the unit tests on pull requests that change `apple/` ([workflow](../.github/workflows/apple.yml)). It uses GitHub's `xcode-27` runner image and pins Xcode 27.1 through `DEVELOPER_DIR`, so a change to the image's default Xcode doesn't move the SDK or simulator runtime. Bump the pin deliberately. On that image, a fresh runner is sometimes still installing its watchOS simulator runtime when the job starts. GitHub doesn't document this, and it still happened after the image went GA. So the workflow waits for the runtime to settle, lets Xcode pick a watch simulator, and boots it first. This is the workaround from [EnO33/foulee#462](https://github.com/EnO33/foulee/issues/462), which hit the same problem. Keep it until runs pass reliably without it. Output goes through `xcbeautify`, and the test result bundle is uploaded when the tests fail.
 

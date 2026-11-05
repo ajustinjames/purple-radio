@@ -48,7 +48,9 @@ Networking, Keychain access, and playlist parsing run off the main actor in `Sen
 
 ## Configuration
 
-`apple/PurpleRadio/Config/Config.xcconfig` is the base configuration for every target and holds `TWITCH_CLIENT_ID`. A public client's ID isn't a secret, so it's committed there once the Twitch app is registered. `Config/Info.plist` passes it to `AppConfiguration`. Signing settings stay in the ignored `Local.xcconfig`.
+`apple/PurpleRadio/Config/Config.xcconfig` is the base configuration for every target. Signing settings and the Twitch client ID stay in the ignored `Local.xcconfig`. `Config/Info.plist` passes `TWITCH_CLIENT_ID` to `AppConfiguration` as the `$(TWITCH_CLIENT_ID)` build setting, so the committed plist holds no value.
+
+No Twitch client ID is committed ([#31](https://github.com/ajustinjames/purple-radio/issues/31)). `Config.xcconfig` leaves `TWITCH_CLIENT_ID` empty, and each developer sets their own registered app's ID in `Local.xcconfig`. A public client's ID isn't a secret, since anyone can read it from a built app's Info.plist. The reason is ownership: a fork building with our ID would show our app's name when its users approve sign-in, and its traffic would count against our app's Twitch rate limits. `AppConfiguration` treats an empty value as unset, and sign-in shows that it isn't configured rather than failing. A fresh clone with no `Local.xcconfig` still builds and passes the unit tests, which don't call Twitch. If a CI job ever needs the ID, such as a release build, store it as a GitHub Actions variable or secret and pass it to `xcodebuild` as `TWITCH_CLIENT_ID=...`; don't write it into a committed file.
 
 ## Logging and secrets
 
