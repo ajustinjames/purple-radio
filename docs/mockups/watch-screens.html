@@ -219,14 +219,20 @@
     max-width: 176px; margin: 0 auto;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .np-head .live-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--live); }
-  .transport {
-    display: flex; align-items: center; justify-content: center; gap: 16px;
-    margin-top: 12px;
+  /* Live label sits in the top bar's centre so it doesn't push the controls down. */
+  .live-tag {
+    position: absolute; left: 50%; top: 18px; transform: translateX(-50%);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--live);
   }
-  .transport .skip { width: 30px; height: 30px; border-radius: 50%; border: 2px dashed var(--label-3); }
+  /* Controls are anchored to the screen, not to the text above, so every state lines up
+     and the layout scales between 46mm and 42mm. */
+  .transport {
+    position: absolute; left: 0; right: 0;
+    top: calc((var(--h) - 28px) / 2); transform: translateY(-50%);
+    display: flex; justify-content: center;
+  }
   .toggle {
-    width: 58px; height: 58px; border-radius: 50%;
+    width: calc(var(--w) * 0.27); height: calc(var(--w) * 0.27); border-radius: 50%;
     display: grid; place-items: center; background: var(--button);
   }
   .toggle.pause::before {
@@ -239,8 +245,8 @@
     border-color: transparent transparent transparent var(--label);
   }
   .np-bottom {
-    position: absolute; left: 0; right: 0; bottom: 10px;
-    display: flex; justify-content: space-between; padding: 0 22px;
+    position: absolute; left: 0; right: 0; bottom: 8px;
+    display: flex; justify-content: space-between; padding: 0 calc(var(--corner) * 0.6);
   }
   .np-bottom span {
     width: 28px; height: 28px; border-radius: 50%;
@@ -587,7 +593,7 @@
             <div class="title">MossyOwl</div>
             <div class="footnote">Connecting…</div>
           </div>
-          <div class="transport"><span class="skip"></span><span class="toggle pause"></span><span class="skip"></span></div>
+          <div class="transport"><span class="toggle pause"></span></div>
         </div>
         <div class="np-bottom"><span>▲</span><span>•••</span></div>
       </div></div>
@@ -596,7 +602,7 @@
         <span class="sys">NowPlayingView</span>
         <ul>
           <li>Resolving the audio-only feed and buffering; the subtitle says so.</li>
-          <li>Dashed circles: skip buttons, which do nothing on a live stream. The app disables those commands; whether the system hides or dims them is to check.</li>
+          <li>Drawn without skip buttons, which do nothing on a live stream. The app disables those commands; whether the system hides or dims them is to check.</li>
           <li>Bottom row: the system's audio output (speaker or AirPods) and more buttons.</li>
         </ul>
       </figcaption>
@@ -604,14 +610,13 @@
 
     <figure class="mock">
       <div class="watch"><div class="screen">
-        <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
+        <div class="topbar"><span class="circle-btn">‹</span><span class="live-tag">LIVE</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
-            <div class="live-tag">LIVE</div>
             <div class="title">MossyOwl</div>
             <div class="footnote">late night chat and a slow puzzle</div>
           </div>
-          <div class="transport"><span class="skip"></span><span class="toggle pause"></span><span class="skip"></span></div>
+          <div class="transport"><span class="toggle pause"></span></div>
         </div>
         <div class="np-bottom"><span>▲</span><span>•••</span></div>
       </div></div>
@@ -634,7 +639,7 @@
             <div class="title">MossyOwl</div>
             <div class="footnote">Ad break</div>
           </div>
-          <div class="transport"><span class="skip"></span><span class="toggle pause"></span><span class="skip"></span></div>
+          <div class="transport"><span class="toggle pause"></span></div>
         </div>
         <div class="np-bottom"><span>▲</span><span>•••</span></div>
         <div class="volume"></div>
@@ -658,7 +663,7 @@
             <div class="title">MossyOwl</div>
             <div class="footnote">Reconnecting…</div>
           </div>
-          <div class="transport"><span class="skip"></span><span class="toggle pause"></span><span class="skip"></span></div>
+          <div class="transport"><span class="toggle pause"></span></div>
         </div>
         <div class="np-bottom"><span>▲</span><span>•••</span></div>
       </div></div>
@@ -680,7 +685,7 @@
             <div class="title">MossyOwl</div>
             <div class="footnote">late night chat and a slow puzzle</div>
           </div>
-          <div class="transport"><span class="skip"></span><span class="toggle play"></span><span class="skip"></span></div>
+          <div class="transport"><span class="toggle play"></span></div>
         </div>
         <div class="np-bottom"><span>▲</span><span>•••</span></div>
       </div></div>
