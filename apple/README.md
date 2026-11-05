@@ -34,7 +34,7 @@ xcodebuild test -project apple/PurpleRadio/PurpleRadio.xcodeproj \
 
 Drop `-only-testing` to run the UI tests too; they take a few minutes.
 
-CI runs the build and the unit tests on pull requests that change `apple/` ([workflow](../.github/workflows/apple.yml)). It uses GitHub's `xcode-27` runner image, which is still a preview and doesn't come with the watchOS simulator runtime, so the workflow downloads it when it's missing.
+CI runs the build and the unit tests on pull requests that change `apple/` ([workflow](../.github/workflows/apple.yml)). It uses GitHub's `xcode-27` runner image, which is still a preview: the workflow waits for its watchOS simulator runtime to mount and creates its own watch simulator. Output goes through `xcbeautify`, and the test result bundle is uploaded when the tests fail.
 
 ## Lessons carried over from the mini POC
 

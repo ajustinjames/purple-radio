@@ -23,20 +23,26 @@ jobs:
     # Xcode 27 is only on the preview image for now (actions/runner-images#14404).
     runs-on: xcode-27
     timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
     env:
       PROJECT: apple/PurpleRadio/PurpleRadio.xcodeproj
       SCHEME: PurpleRadio Watch App
     steps:
       - uses: actions/checkout@v7
 
-      - name: Show Xcode version
-        run: xcodebuild -version
+      - name: Set up tools
+        run: |
+          xcodebuild -version
+          command -v xcbeautify || brew install xcbeautify
 
       - name: Build for device
         run: >
           xcodebuild build -project "$PROJECT" -scheme "$SCHEME"
           -destination 'generic/platform=watchOS'
           CODE_SIGNING_ALLOWED=NO
+          | xcbeautify --renderer github-actions
 
       # The image's watchOS runtime is still mounting when the job starts, so wait for
       # it. Its preinstalled watch simulators show as unavailable, so create one.
@@ -49,7 +55,6 @@ jobs:
             xcrun simctl list runtimes available | grep -q '^watchOS' && break
             sleep 5
           done
-          xcrun simctl list runtimes available
           runtime=$(xcrun simctl list runtimes available --json \
             | jq -c '[.runtimes[] | select(.platform == "watchOS")] | first')
           runtime_id=$(jq -r '.identifier' <<< "$runtime")
@@ -63,4 +68,14 @@ jobs:
           xcodebuild test -project "$PROJECT" -scheme "$SCHEME"
           -destination "id=$SIMULATOR_ID"
           -only-testing:"PurpleRadio Watch AppTests"
+          -resultBundlePath TestResults.xcresult
           CODE_SIGNING_ALLOWED=NO
+          | xcbeautify --renderer github-actions
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: TestResults
+          path: TestResults.xcresult
+          if-no-files-found: ignore
