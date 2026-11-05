@@ -9,7 +9,7 @@ Everything is in `PurpleRadio/`:
 - `PurpleRadio.xcodeproj` uses Xcode 27's text project format (`project.xcproj`). Edit it in Xcode or with Xcode's `xcodeproj` command-line tool rather than by hand. The shared `PurpleRadio Watch App` scheme builds the app and runs both test targets.
 - `PurpleRadio Watch App/` holds the app's Swift sources, grouped by feature as described in the [architecture note](../docs/architecture.md). It's a synchronized folder, so Xcode adds new files to the target automatically.
 - `PurpleRadio Watch AppTests/` holds unit tests, which use Swift Testing and run in the app on the watch simulator.
-- `PurpleRadio Watch AppUITests/` holds the template's UI tests, which use XCTest.
+- `PurpleRadio Watch AppUITests/` holds a launch smoke test, which uses XCTest.
 - `Config/Config.xcconfig` is the base configuration for every target. It holds `BUNDLE_ID_PREFIX` and `TWITCH_CLIENT_ID`. `Config/Info.plist` adds the keys Xcode doesn't generate: `UIBackgroundModes` and `TwitchClientID`.
 - `Config/Local.xcconfig` is optional, ignored by Git, and holds your signing settings.
 
@@ -43,4 +43,4 @@ CI runs the build and the unit tests on pull requests that change `apple/` ([wor
 - Never log tokens, signed URLs, or raw `NSError` descriptions, because they can embed signed URLs. Log errors with `Log.redacted(_:)`, which keeps only the domain and code.
 - Signing settings stay out of the project file and shared config. `DEVELOPMENT_TEAM` belongs in `Local.xcconfig`.
 
-The mini POC code is kept on the `mini-poc-code` branch for reference only. The app has no images or icons yet; follow the [AI policy](../AI_POLICY.md) when adding assets.
+The mini POC's code isn't in this repository; its findings are in the [mini POC feasibility doc](../docs/mini-poc-audio-feasibility.md). The app has no images or icons yet; follow the [AI policy](../AI_POLICY.md) when adding assets.
