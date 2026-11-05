@@ -25,7 +25,6 @@
     --accent: #9b6cff;
     --accent-ink: #ffffff;
     --live: #ff3b30;
-    --ad: #ffd60a;
     --label: #ffffff;
     --label-2: rgba(235, 235, 245, 0.6);
     --label-3: rgba(235, 235, 245, 0.35);
@@ -103,6 +102,7 @@
   figure.mock figcaption ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
   figure.mock figcaption li + li { margin-top: 3px; }
   .q { color: var(--link); font-weight: 600; }
+  figcaption code { overflow-wrap: anywhere; }
 
   /* ---------- Watch frame ---------- */
   .watch {
@@ -213,45 +213,43 @@
   .eq i { width: 3px; background: var(--accent); border-radius: 1px; }
   .eq i:nth-child(1) { height: 60%; } .eq i:nth-child(2) { height: 100%; } .eq i:nth-child(3) { height: 40%; }
 
-  /* ---------- Now playing ---------- */
-  .pill {
-    display: inline-block; padding: 2px 7px; border-radius: 5px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  /* ---------- Now playing (approximation of the system view) ---------- */
+  .np-head { text-align: center; margin-top: 2px; }
+  .np-head .title, .np-head .footnote {
+    max-width: 176px; margin: 0 auto;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .pill.live { background: var(--live); color: #fff; }
-  .pill.ad { background: var(--ad); color: #000; }
-  .pill.muted { background: var(--button); color: var(--label-2); }
-  .np-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; margin-top: 2px; }
-  .np-head .title { max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .np-line {
-    display: flex; gap: 5px; align-items: center; justify-content: center;
-    max-width: 170px; font-size: 12px; color: var(--label-2);
+  .np-head .live-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--live); }
+  .transport {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    margin-top: 12px;
   }
-  .np-line > span:last-child:not(.pill) { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .np-line .pill { flex: none; }
-  .np-controls {
-    position: absolute; left: 0; right: 0; bottom: 14px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px;
-  }
-  .np-controls .side {
-    width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
-    background: var(--button); font-size: 10px; font-weight: 600; color: var(--label-2);
-  }
-  .np-controls .side.blank { background: none; }
-  .stop {
+  .transport .skip { width: 30px; height: 30px; border-radius: 50%; border: 2px dashed var(--label-3); }
+  .toggle {
     width: 58px; height: 58px; border-radius: 50%;
     display: grid; place-items: center; background: var(--button);
   }
-  .stop::before { content: ""; width: 20px; height: 20px; border-radius: 4px; background: var(--label); }
-  .play::before {
-    content: ""; width: 0; height: 0; margin-left: 5px; border-radius: 0; background: none;
+  .toggle.pause::before {
+    content: ""; width: 18px; height: 22px;
+    background: linear-gradient(90deg, var(--label) 0 6px, transparent 6px 12px, var(--label) 12px 18px);
+  }
+  .toggle.play::before {
+    content: ""; width: 0; height: 0; margin-left: 5px;
     border-style: solid; border-width: 12px 0 12px 20px;
     border-color: transparent transparent transparent var(--label);
   }
+  .np-bottom {
+    position: absolute; left: 0; right: 0; bottom: 10px;
+    display: flex; justify-content: space-between; padding: 0 22px;
+  }
+  .np-bottom span {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--button); color: var(--label-2); font-size: 10px; font-weight: 700;
+  }
   /* Volume level beside the Digital Crown while it's turned. */
   .volume {
-    position: absolute; right: 5px; top: 70px; width: 5px; height: 80px;
+    position: absolute; right: 5px; top: 60px; width: 5px; height: 80px;
     border-radius: 3px; background: var(--label-3); overflow: hidden;
   }
   .volume::after {
@@ -259,6 +257,14 @@
     background: var(--accent);
   }
 
+  /* Which system components a screen is built from. */
+  .sys {
+    display: inline-block; margin-top: 4px; padding: 1px 7px;
+    border: 1px solid var(--rule); border-radius: 6px; background: var(--card);
+    font: 12px/1.5 "SF Mono", ui-monospace, Menlo, monospace; color: var(--ink);
+  }
+  .decided { color: var(--ink); }
+  .decided::before { content: "Decided: "; font-weight: 600; }
   .notes-box {
     max-width: 1200px; margin: 0 auto; padding: 24px 32px 48px;
     border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px;
@@ -277,7 +283,10 @@
     It isn't a pixel-accurate watchOS rendering. Shapes stand in for artwork, the QR code is a non-scannable
     placeholder, and channel names are invented.
   </p>
-  <p>Notes in <span class="q">purple</span> are open questions.</p>
+  <p>
+    Screens use system SwiftUI and WatchKit components wherever possible, for compatibility and speed (owner decision,
+    2026-11-04). Each screen names the components it's built from. Notes in <span class="q">purple</span> are open questions.
+  </p>
   <div class="controls">
     <fieldset>
       <legend>Watch size</legend>
@@ -321,9 +330,12 @@
       </div></div>
       <figcaption>
         <strong>1. Scan to sign in</strong>
+        <span class="sys">QR image · Text</span>
         <ul>
           <li>Polls Twitch until the code is approved; no button press needed.</li>
           <li>The code and URL let the listener type it in if they can't scan.</li>
+          <li class="decided">when the code expires, a new code replaces it on this screen. There's no separate “expired” screen.</li>
+          <li class="q">Core Image isn't in the watchOS SDK, so there's no system QR generator. Write a small encoder or use a package? To decide in #19.</li>
           <li class="q">Show a short instruction above the QR code, or keep the screen to the code alone?</li>
         </ul>
       </figcaption>
@@ -339,26 +351,9 @@
       </div></div>
       <figcaption>
         <strong>2. Approved, signing in</strong>
+        <span class="sys">ProgressView</span>
         <ul>
           <li>Brief: shown while tokens are saved and the account is loaded.</li>
-        </ul>
-      </figcaption>
-    </figure>
-
-    <figure class="mock">
-      <div class="watch"><div class="screen">
-        <div class="topbar"><span class="navtitle">Sign In</span><span class="time">10:09</span></div>
-        <div class="body center">
-          <div class="title">Code expired</div>
-          <div class="footnote" style="margin:6px 4px 14px">Get a new code to sign in.</div>
-          <div class="btn accent">New Code</div>
-        </div>
-      </div></div>
-      <figcaption>
-        <strong>3. Code expired</strong>
-        <ul>
-          <li>Device codes expire after a set time.</li>
-          <li class="q">Fetch a new code automatically instead of asking?</li>
         </ul>
       </figcaption>
     </figure>
@@ -373,7 +368,8 @@
         </div>
       </div></div>
       <figcaption>
-        <strong>4. Sign-in error</strong>
+        <strong>3. Sign-in error</strong>
+        <span class="sys">ContentUnavailableView · Button</span>
         <ul>
           <li>Network failure. If the listener denies access in the browser, say “Sign-in was cancelled” instead.</li>
         </ul>
@@ -389,7 +385,8 @@
         </div>
       </div></div>
       <figcaption>
-        <strong>5. Not configured</strong>
+        <strong>4. Not configured</strong>
+        <span class="sys">ContentUnavailableView</span>
         <ul>
           <li>Developer builds only: no client ID is set (<a href="https://github.com/ajustinjames/purple-radio/issues/31">#31</a>).</li>
         </ul>
@@ -405,7 +402,7 @@
   <p>
     The main screen once signed in: followed channels that are live now
     (<a href="https://github.com/ajustinjames/purple-radio/issues/20">#20</a>). Tapping a row starts its audio and
-    opens Now Playing.
+    opens Now Playing. An Account row at the end of the list leads to sign-out.
   </p>
   <div class="frames">
 
@@ -434,12 +431,40 @@
       </div></div>
       <figcaption>
         <strong>1. Live channels</strong>
+        <span class="sys">NavigationStack · List</span>
         <ul>
           <li>Name, then viewers and category. The stream title is shown on Now Playing.</li>
           <li>Circles stand in for channel images (Helix <code>profile_image_url</code>, if permitted).</li>
-          <li>Viewers share the second line so names keep their width on 42mm.</li>
-          <li class="q">Keep the viewer count? <code>LiveStream</code> doesn't carry it yet.</li>
+          <li class="decided">keep the viewer count, at low priority. <code>LiveStream</code> needs a field for it.</li>
           <li class="q">Sort by viewers, or keep Twitch's order?</li>
+        </ul>
+      </figcaption>
+    </figure>
+
+    <figure class="mock">
+      <div class="watch"><div class="screen">
+        <div class="topbar"><span class="navtitle">Live</span><span class="time">10:09</span></div>
+        <div class="body">
+          <div class="row">
+            <div class="avatar" style="background:#3fae8c">LP</div>
+            <div class="meta"><div class="name">LanternPilot</div><div class="sub"><span class="viewers">87</span> · Talk Shows &amp; Podcasts</div></div>
+          </div>
+          <div class="row">
+            <div class="avatar" style="background:#c069c9">BR</div>
+            <div class="meta"><div class="name">BrambleRun</div><div class="sub"><span class="viewers">42</span> · Chess</div></div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div class="avatar" style="background:#8a8f99">YO</div>
+            <div class="meta"><div class="name">Account</div><div class="sub">YourName</div></div>
+          </div>
+        </div>
+        <div class="scrollbar" style="top:auto;bottom:46px"></div>
+      </div></div>
+      <figcaption>
+        <strong>2. End of the list</strong>
+        <span class="sys">List · NavigationLink</span>
+        <ul>
+          <li class="decided">the Account row is the last item in the list and opens Account.</li>
         </ul>
       </figcaption>
     </figure>
@@ -469,7 +494,8 @@
         <div class="scrollbar"></div>
       </div></div>
       <figcaption>
-        <strong>2. While listening</strong>
+        <strong>3. While listening</strong>
+        <span class="sys">toolbar · ToolbarItem</span>
         <ul>
           <li>The playing channel is outlined, and a top-right button returns to Now Playing.</li>
           <li>The button replaces the clock, as watchOS toolbar buttons do.</li>
@@ -486,7 +512,8 @@
         </div>
       </div></div>
       <figcaption>
-        <strong>3. Loading</strong>
+        <strong>4. Loading</strong>
+        <span class="sys">ProgressView</span>
         <ul>
           <li>First load after launch or sign-in.</li>
           <li class="q">Refresh on open, pull to refresh, or periodically? To decide in #20.</li>
@@ -497,16 +524,22 @@
     <figure class="mock">
       <div class="watch"><div class="screen">
         <div class="topbar"><span class="navtitle">Live</span><span class="time">10:09</span></div>
-        <div class="body center">
-          <div class="title">No live channels</div>
-          <div class="footnote" style="margin:6px 4px 14px">Channels you follow appear here when they go live.</div>
-          <div class="btn">Refresh</div>
+        <div class="body">
+          <div class="title" style="text-align:center;margin-top:6px">No live channels</div>
+          <div class="footnote" style="text-align:center;margin:4px 4px 10px">Followed channels appear here when they go live.</div>
+          <div class="btn" style="margin-bottom:8px">Refresh</div>
+          <div class="row">
+            <div class="avatar" style="background:#8a8f99">YO</div>
+            <div class="meta"><div class="name">Account</div><div class="sub">YourName</div></div>
+          </div>
         </div>
       </div></div>
       <figcaption>
-        <strong>4. No live channels</strong>
+        <strong>5. No live channels</strong>
+        <span class="sys">ContentUnavailableView · Button</span>
         <ul>
           <li>Empty state required by <a href="../prd.md#product-requirements">PR-2</a>.</li>
+          <li>The Account row stays, so sign-out is reachable with nothing live.</li>
         </ul>
       </figcaption>
     </figure>
@@ -521,9 +554,11 @@
         </div>
       </div></div>
       <figcaption>
-        <strong>5. Load error</strong>
+        <strong>6. Load error</strong>
+        <span class="sys">ContentUnavailableView · Button</span>
         <ul>
           <li>A network error, not an empty list. An expired or revoked token goes through sign-in instead.</li>
+          <li>The Account row follows the button, as in the empty state.</li>
         </ul>
       </figcaption>
     </figure>
@@ -535,10 +570,12 @@
 <section class="screen-group" id="now-playing">
   <h2>Now playing</h2>
   <p>
-    Opens when a stream is chosen. Live audio can't pause and resume where it left off, so the main control is
-    Stop (<a href="https://github.com/ajustinjames/purple-radio/issues/21">#21</a>). The Digital Crown sets the
-    volume. Listening continues after leaving the app
-    (<a href="https://github.com/ajustinjames/purple-radio/issues/23">#23</a>).
+    Uses WatchKit's <code>NowPlayingView</code>, the system media controls, instead of a custom player screen
+    (<a href="https://github.com/ajustinjames/purple-radio/issues/21">#21</a>,
+    <a href="https://github.com/ajustinjames/purple-radio/issues/23">#23</a>). Apple draws this screen, so these
+    frames only approximate it. The app supplies the title and subtitle through <code>MPNowPlayingInfoCenter</code>
+    and chooses which controls work through <code>MPRemoteCommandCenter</code>; how much of that the watch shows is
+    still to check on the device. The Digital Crown sets the volume.
   </p>
   <div class="frames">
 
@@ -547,22 +584,20 @@
         <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
-            <div class="avatar lg" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="np-line"><span class="pill muted">CONNECTING</span></div>
+            <div class="footnote">Connecting…</div>
           </div>
+          <div class="transport"><span class="skip"></span><span class="toggle pause"></span><span class="skip"></span></div>
         </div>
-        <div class="np-controls">
-          <span class="side">Out</span>
-          <span class="stop"></span>
-          <span class="side blank"></span>
-        </div>
+        <div class="np-bottom"><span>▲</span><span>•••</span></div>
       </div></div>
       <figcaption>
         <strong>1. Connecting</strong>
+        <span class="sys">NowPlayingView</span>
         <ul>
-          <li>Resolving the audio-only feed and buffering.</li>
-          <li>Stop is available straight away to cancel.</li>
+          <li>Resolving the audio-only feed and buffering; the subtitle says so.</li>
+          <li>Dashed circles: skip buttons, which do nothing on a live stream. The app disables those commands; whether the system hides or dims them is to check.</li>
+          <li>Bottom row: the system's audio output (speaker or AirPods) and more buttons.</li>
         </ul>
       </figcaption>
     </figure>
@@ -572,24 +607,21 @@
         <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
-            <div class="avatar lg" style="background:#5b7cfa">MO</div>
+            <div class="live-tag">LIVE</div>
             <div class="title">MossyOwl</div>
-            <div class="np-line"><span class="pill live">LIVE</span><span>late night chat and a slow puzzle</span></div>
+            <div class="footnote">late night chat and a slow puzzle</div>
           </div>
+          <div class="transport"><span class="skip"></span><span class="toggle pause"></span><span class="skip"></span></div>
         </div>
-        <div class="np-controls">
-          <span class="side">Out</span>
-          <span class="stop"></span>
-          <span class="side blank"></span>
-        </div>
+        <div class="np-bottom"><span>▲</span><span>•••</span></div>
       </div></div>
       <figcaption>
         <strong>2. Playing</strong>
+        <span class="sys">NowPlayingView</span>
         <ul>
-          <li>Channel, LIVE badge and stream title. Long titles are truncated.</li>
-          <li>“Out” opens the system audio route picker: speaker or AirPods.</li>
-          <li class="q">Use the system Now Playing view instead of a custom one?</li>
-          <li class="q">Show the category here as well?</li>
+          <li>Title is the channel; subtitle is the stream title.</li>
+          <li class="q">The app marks the item live with <code>MPNowPlayingInfoPropertyIsLiveStream</code> (watchOS 5+). Does the watch show a live label for it?</li>
+          <li class="q">Show the category in the subtitle as well?</li>
         </ul>
       </figcaption>
     </figure>
@@ -599,24 +631,21 @@
         <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
-            <div class="avatar lg" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="np-line"><span class="pill ad">AD</span><span>Back after the ad</span></div>
+            <div class="footnote">Ad break</div>
           </div>
+          <div class="transport"><span class="skip"></span><span class="toggle pause"></span><span class="skip"></span></div>
         </div>
-        <div class="np-controls">
-          <span class="side">Out</span>
-          <span class="stop"></span>
-          <span class="side blank"></span>
-        </div>
+        <div class="np-bottom"><span>▲</span><span>•••</span></div>
         <div class="volume"></div>
       </div></div>
       <figcaption>
         <strong>3. Ad break, turning the Crown</strong>
+        <span class="sys">NowPlayingView</span>
         <ul>
-          <li>Ads play as served (<a href="https://github.com/ajustinjames/purple-radio/issues/22">#22</a>); the badge says why the stream isn't live audio.</li>
-          <li>The bar by the Crown shows the volume while it turns.</li>
-          <li class="q">The mini POC saw ad segments labelled <code>Amazon</code> in <code>#EXTINF</code>. Is that reliable enough to drive this badge?</li>
+          <li>Ads play as served (<a href="https://github.com/ajustinjames/purple-radio/issues/22">#22</a>). While one plays, the subtitle says so.</li>
+          <li>The system shows the volume by the Crown while it turns.</li>
+          <li class="q">The mini POC saw ad segments labelled <code>Amazon</code> in <code>#EXTINF</code>. Is that reliable enough to drive this subtitle?</li>
         </ul>
       </figcaption>
     </figure>
@@ -626,22 +655,41 @@
         <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
-            <div class="avatar lg" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="np-line"><span class="pill muted">RECONNECTING</span></div>
+            <div class="footnote">Reconnecting…</div>
           </div>
+          <div class="transport"><span class="skip"></span><span class="toggle pause"></span><span class="skip"></span></div>
         </div>
-        <div class="np-controls">
-          <span class="side">Out</span>
-          <span class="stop"></span>
-          <span class="side blank"></span>
-        </div>
+        <div class="np-bottom"><span>▲</span><span>•••</span></div>
       </div></div>
       <figcaption>
         <strong>4. Reconnecting</strong>
+        <span class="sys">NowPlayingView</span>
         <ul>
           <li>Network dropped or changed, or the signed URL expired (<a href="https://github.com/ajustinjames/purple-radio/issues/24">#24</a>).</li>
           <li class="q">How long to retry before giving up? Not defined yet.</li>
+        </ul>
+      </figcaption>
+    </figure>
+
+    <figure class="mock">
+      <div class="watch"><div class="screen">
+        <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
+        <div class="body">
+          <div class="np-head">
+            <div class="title">MossyOwl</div>
+            <div class="footnote">late night chat and a slow puzzle</div>
+          </div>
+          <div class="transport"><span class="skip"></span><span class="toggle play"></span><span class="skip"></span></div>
+        </div>
+        <div class="np-bottom"><span>▲</span><span>•••</span></div>
+      </div></div>
+      <figcaption>
+        <strong>5. Paused or interrupted</strong>
+        <span class="sys">NowPlayingView</span>
+        <ul>
+          <li>Live audio can't resume where it left off, so Pause stops the stream and Play rejoins it live.</li>
+          <li class="decided">after a Siri, alarm or call interruption, resume automatically when the system recommends it, as standard media playback does. watchOS 27 sends <code>AVAudioSession.resumptionRecommendationNotification</code> for this; the older interruption notification is deprecated.</li>
         </ul>
       </figcaption>
     </figure>
@@ -657,35 +705,10 @@
         </div>
       </div></div>
       <figcaption>
-        <strong>5. Stream ended or offline</strong>
+        <strong>6. Stream ended or offline</strong>
+        <span class="sys">ContentUnavailableView · Button</span>
         <ul>
-          <li>The channel went offline mid-stream, or was offline when chosen (usher 404).</li>
-        </ul>
-      </figcaption>
-    </figure>
-
-    <figure class="mock">
-      <div class="watch"><div class="screen">
-        <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
-        <div class="body">
-          <div class="np-head">
-            <div class="avatar lg" style="background:#5b7cfa">MO</div>
-            <div class="title">MossyOwl</div>
-            <div class="np-line">Stopped</div>
-          </div>
-        </div>
-        <div class="np-controls">
-          <span class="side">Out</span>
-          <span class="stop play"></span>
-          <span class="side blank"></span>
-        </div>
-      </div></div>
-      <figcaption>
-        <strong>6. Stopped or interrupted</strong>
-        <ul>
-          <li>After Stop, or a Siri, alarm or call interruption.</li>
-          <li>Play rejoins the live stream from now.</li>
-          <li class="q">Resume automatically after an interruption ends?</li>
+          <li>Replaces the Now Playing view when the channel goes offline mid-stream, or was offline when chosen (usher 404).</li>
         </ul>
       </figcaption>
     </figure>
@@ -697,8 +720,8 @@
 <section class="screen-group" id="account">
   <h2>Account</h2>
   <p>
-    The signed-in account and sign-out (<a href="https://github.com/ajustinjames/purple-radio/issues/19">#19</a>).
-    No other account management is in scope.
+    The signed-in account and sign-out (<a href="https://github.com/ajustinjames/purple-radio/issues/19">#19</a>),
+    opened from the Account row at the end of the Live list. No other account management is in scope.
   </p>
   <div class="frames">
 
@@ -716,8 +739,9 @@
       </div></div>
       <figcaption>
         <strong>1. Account</strong>
+        <span class="sys">List · Button(role: .destructive)</span>
         <ul>
-          <li class="q">Where does this open from: a toolbar button on Live, or the end of the list?</li>
+          <li>Shows who's signed in, the sign-out button and the app version.</li>
         </ul>
       </figcaption>
     </figure>
@@ -734,6 +758,7 @@
       </div></div>
       <figcaption>
         <strong>2. Confirm sign-out</strong>
+        <span class="sys">confirmationDialog</span>
         <ul>
           <li>Removes the stored tokens, then returns to sign-in.</li>
         </ul>
@@ -748,6 +773,8 @@
   <ul>
     <li>Screen sizes are watchOS points for the 46mm and 42mm Series 10 and later displays.</li>
     <li>Text uses SF Compact when it's installed and falls back to the system font, so line breaks may differ from the watch.</li>
+    <li>System components draw themselves on the watch; the frames here are approximations of them.</li>
+    <li>API availability was checked against the watchOS 27.2 SDK headers in Xcode 27.</li>
     <li>The accent colour is a placeholder; the app's AccentColor asset isn't set yet.</li>
     <li>Code only: no images, icons or logos. See the <a href="../../AI_POLICY.md">AI policy</a>.</li>
   </ul>

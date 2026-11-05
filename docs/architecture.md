@@ -27,6 +27,12 @@ Keep the undocumented playback flow inside `Playback/Source/`, behind `AudioSour
 - Signed in: followed live streams → choose a stream → now playing. Playback state outlives the view that started it, so listening continues after navigating away or leaving the app. `AppModel` owns the playback model (#21) for that reason; views get it from `AppModel` rather than creating it.
 - `AppModel` starts signed out. When #19 stores credentials, it adds a launch phase that loads them before choosing a view, so a signed-in listener doesn't see sign-in flash on launch.
 
+## Views
+
+Build screens from system SwiftUI and WatchKit components wherever possible, for compatibility with future watchOS releases and speed of development (owner decision, 2026-11-04). Use `NavigationStack` and `List` for the followed streams, `ContentUnavailableView` for empty and error states, `ProgressView` for loading, and `confirmationDialog` for sign-out. Playback uses WatchKit's `NowPlayingView`, fed through `MPNowPlayingInfoCenter` and `MPRemoteCommandCenter`, instead of custom player controls. Write a custom view only when no system component fits, such as the sign-in QR code: Core Image isn't in the watchOS SDK, so there's no system QR generator.
+
+The [watch screen mockups](mockups/watch-screens.html) show each screen and state, and the components it uses.
+
 ## Services and dependencies
 
 - Services such as the token store, Twitch client, and stream resolver are `Sendable` types that use `async` APIs and expose protocols where tests need a substitute.
