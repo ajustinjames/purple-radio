@@ -65,10 +65,14 @@ jobs:
             echo "Waiting for the watchOS runtime to finish installing"
             sleep 10
           done
+          # Reads all of xcodebuild's output instead of stopping early, so no part of the
+          # pipeline is killed by SIGPIPE, which pipefail would turn into a failed step.
           eligible_watch() {
             xcodebuild -project "$PROJECT" -scheme "$SCHEME" -showdestinations 2> /dev/null \
-              | awk '/Ineligible destinations/ { exit } /platform:watchOS Simulator/ && !/placeholder/' \
-              | sed -n 's/.*id:\([^,]*\),.*/\1/p' | head -1
+              | awk '/Ineligible destinations/ { skip = 1 }
+                     !skip && !found && /platform:watchOS Simulator/ && !/placeholder/ {
+                       if (match($0, /id:[^,]*/)) { print substr($0, RSTART + 3, RLENGTH - 3); found = 1 }
+                     }'
           }
           id=$(eligible_watch)
           if [ -z "$id" ]; then
