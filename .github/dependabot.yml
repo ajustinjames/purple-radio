@@ -1,0 +1,16 @@
+# Dependabot version updates. The only dependencies today are the GitHub Actions
+# used by the workflows. When the Apple app adds Swift packages, check whether
+# Dependabot's "swift" ecosystem supports packages added through the Xcode project
+# before adding an entry for it.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: ci
