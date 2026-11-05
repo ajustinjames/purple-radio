@@ -41,6 +41,9 @@ jobs:
       # The image lists watch simulators but doesn't install their runtime.
       - name: Install the watchOS simulator runtime
         run: |
+          xcrun simctl list runtimes
+          xcrun simctl runtime list -v
+          xcrun simctl runtime match list
           if ! xcrun simctl list runtimes available | grep -q '^watchOS'; then
             xcodebuild -downloadPlatform watchOS
           fi
