@@ -1,3 +1,6 @@
 // Copy to Local.xcconfig (ignored by Git) and uncomment what you need.
 // DEVELOPMENT_TEAM = YOURTEAMID
 // BUNDLE_ID_PREFIX = com.example
+// Your own Twitch app's client ID, for testing sign-in before the shared one is in
+// Config.xcconfig.
+// TWITCH_CLIENT_ID = yourclientid
