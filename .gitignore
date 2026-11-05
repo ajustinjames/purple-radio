@@ -1,0 +1,7 @@
+# Repository-wide ignores. Each platform directory has its own .gitignore
+# for its toolchain.
+
+# Local working notes
+MINI_POC_HANDOFF.md
+
+.DS_Store

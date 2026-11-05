@@ -71,7 +71,7 @@ Tested on an Apple Watch Series 10 running watchOS 27.0. The experimental app an
 
 ### Decisions
 
-- **The experimental code is not merged.** It is kept for reference on the `mini-poc-code` branch and must not be promoted into the release design.
+- **The experimental code is not merged.** It isn't in this repository and must not be promoted into the release design.
 - **The watch resolves the source itself.** The owner chose not to open the Mac firewall for the path B relay, so the app requests the Twitch token, the usher multivariant playlist and the explicit AAC `audio_only` variant directly from the watch. It passes only that media playlist to `AVPlayer` and never falls back to a video variant. This is path A with no Mac dependency. The earlier build used the Mac for source discovery on both paths.
 - **The owner ended the smoke test on 2026-11-03** after foreground playback on both routes and background playback had worked. The owner also dropped the five-minute-per-route duration requirement: confirmed playback on each route counts as a pass for the mini POC, and sustained-playback reliability moves to the main POC. The other open checks below are not waived.
 
@@ -104,7 +104,7 @@ Consequences:
 
 ## Close-out — 2026-11-04
 
-The owner closed the mini POC with the following exceptions and decisions. They are tracked in the [Main POC milestone](https://github.com/ajustinjames/purple-radio/milestone/1).
+The owner closed the mini POC with the following exceptions and decisions. They are tracked in the [MVP milestone](https://github.com/ajustinjames/purple-radio/milestone/1), which replaced the planned main POC.
 
 - **Ads must be supported.** The app plays Twitch ads rather than blocking or stripping them, to stay on good terms with Twitch. Because the ads stitched into the `audio_only` rendition carry video, this conflicts with [PR-4](prd.md#product-requirements) as written. PR-4 is unchanged until the owner chooses an approach; approaches are tested in [#22](https://github.com/ajustinjames/purple-radio/issues/22).
 - **Audio-only transfer is not met.** It fails for path A whenever an ad is served and was not verified otherwise. This is accepted as a known exception pending #22, not a pass.

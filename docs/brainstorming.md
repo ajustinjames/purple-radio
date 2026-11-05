@@ -22,24 +22,24 @@ The available test device is an Apple Watch Series 10 with cellular service, run
 
 ### Mini POC: one stream
 
-Play an audio-only feed from one known live Twitch stream on the watch over Wi-Fi, without transferring video. Test playback through both the watch speaker and AirPods Pro 3. Try the standard watchOS background-audio setup and check whether audio continues after lowering the wrist or returning to the watch face. If live-stream background playback takes more than the normal audio-session setup, in-app playback is sufficient to pass this mini POC; carry background playback into the main POC. This stage does not include sign-in, browsing, or cellular support.
+Play an audio-only feed from one known live Twitch stream on the watch over Wi-Fi, without transferring video. Test playback through both the watch speaker and AirPods Pro 3. Try the standard watchOS background-audio setup and check whether audio continues after lowering the wrist or returning to the watch face. If live-stream background playback takes more than the normal audio-session setup, in-app playback is sufficient to pass this mini POC; carry background playback into the MVP. This stage does not include sign-in, browsing, or cellular support.
 
 Apple [documents background audio for watchOS apps](https://developer.apple.com/documentation/watchkit/playing-background-audio) and [confirms third-party media playback through the Series 10 speaker](https://www.apple.com/newsroom/2024/09/introducing-apple-watch-series-10/). Apple's [watchOS 27 audio-route guide](https://support.apple.com/guide/watch/choose-an-audio-destination-apd0110baf0e/27/watchos/27) says media playback through the watch speaker is unavailable while charging, so test speaker playback off the charger.
 
-### Main POC: listening loop
+### MVP: listening loop
 
-Prove the core listening loop on a physical Apple Watch:
+The planned main POC became the MVP on 2026-11-04: the first draft of the app rather than another proof of concept. Build the core listening loop on a physical Apple Watch:
 
 1. Start a QR-based Twitch sign-in from the watch and obtain the access needed to show live followed streams.
 2. Select a live stream and play its audio on the watch over Wi-Fi and cellular.
 3. Confirm the intended audio routes and behavior when the app is no longer foregrounded.
 4. Record the playback mechanism and its dependencies.
 
-The POC may use focused experimental code. Its findings should inform a deliberate app architecture; experimental code is not automatically production code.
+The mini POC's findings inform the MVP's architecture, but its experimental code is not carried over.
 
 ## Separate distribution track
 
-Assess Twitch terms, playback access, and App Store suitability independently of whether the POC plays audio. Experimental playback is acceptable for the POC; a working experiment alone does not settle whether the app can be distributed.
+Assess Twitch terms, playback access, and App Store suitability independently of whether the app plays audio. Experimental playback is acceptable for the mini POC and MVP; a working MVP alone does not settle whether the app can be distributed.
 
 ## Intent to preserve
 

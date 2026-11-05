@@ -1,0 +1,9 @@
+# Xcode
+DerivedData/
+build/
+.build/
+xcuserdata/
+*.xcuserstate
+
+# Local signing settings
+PurpleRadio/Config/Local.xcconfig

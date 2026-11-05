@@ -1,0 +1,108 @@
+name: Apple Watch app
+
+on:
+  pull_request:
+    paths:
+      - "apple/**"
+      - ".github/workflows/apple.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apple/**"
+      - ".github/workflows/apple.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apple-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    # GitHub's Xcode 27 image (GA since 2026-10-15; actions/runner-images#14404).
+    runs-on: xcode-27
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
+    env:
+      PROJECT: apple/PurpleRadio/PurpleRadio.xcodeproj
+      SCHEME: PurpleRadio Watch App
+      # Pin Xcode 27.1 rather than the image's default, which moves when GitHub
+      # updates the image. 27.1 ships the watchOS 27.0 simulator runtime, which
+      # matches the deployment target. Bump this deliberately.
+      DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up tools
+        run: |
+          xcodebuild -version
+          command -v xcbeautify || brew install xcbeautify
+
+      - name: Build for device
+        run: >
+          xcodebuild build -project "$PROJECT" -scheme "$SCHEME"
+          -destination 'generic/platform=watchOS'
+          CODE_SIGNING_ALLOWED=NO
+          | xcbeautify --renderer github-actions
+
+      # Known issue on the xcode-27 image, seen after it went GA and not documented by
+      # GitHub: a fresh runner is still installing its watchOS runtime when the job
+      # starts, so the runtime comes and goes. Wait until it settles, let Xcode pick the
+      # simulator (creating one if none is eligible), and boot it before the tests
+      # start. Adapted from EnO33/foulee#462. Keep it until runs pass without it.
+      - name: Pick and boot a watch simulator
+        run: |
+          watch_runtime_settled() {
+            xcrun simctl runtime list -j | jq -e '
+              [to_entries[] | select(.value.platformIdentifier | test("watch"; "i")) | .value.state]
+              | any(. == "Ready") and all(test("ing$") | not)' > /dev/null
+          }
+          for _ in $(seq 18); do
+            watch_runtime_settled && break
+            echo "Waiting for the watchOS runtime to finish installing"
+            sleep 10
+          done
+          # Reads all of xcodebuild's output instead of stopping early, so no part of the
+          # pipeline is killed by SIGPIPE, which pipefail would turn into a failed step.
+          eligible_watch() {
+            xcodebuild -project "$PROJECT" -scheme "$SCHEME" -showdestinations 2> /dev/null \
+              | awk '/Ineligible destinations/ { skip = 1 }
+                     !skip && !found && /platform:watchOS Simulator/ && !/placeholder/ {
+                       if (match($0, /id:[^,]*/)) { print substr($0, RSTART + 3, RLENGTH - 3); found = 1 }
+                     }'
+          }
+          id=$(eligible_watch)
+          if [ -z "$id" ]; then
+            runtime=$(xcrun simctl list runtimes available -j \
+              | jq -c '[.runtimes[] | select(.platform == "watchOS")] | sort_by(.version) | last')
+            device_type=$(jq -r '[.supportedDeviceTypes[] | select(.productFamily == "Apple Watch")] | last | .identifier' <<< "$runtime")
+            xcrun simctl create "CI Watch" "$device_type" "$(jq -r .identifier <<< "$runtime")"
+            id=$(eligible_watch)
+          fi
+          if [ -z "$id" ]; then
+            echo "No watchOS simulator that Xcode accepts"
+            xcrun simctl runtime list -v || true
+            exit 1
+          fi
+          xcrun simctl bootstatus "$id" -b
+          echo "SIMULATOR_ID=$id" >> "$GITHUB_ENV"
+
+      - name: Run unit tests
+        run: >
+          xcodebuild test -project "$PROJECT" -scheme "$SCHEME"
+          -destination "id=$SIMULATOR_ID"
+          -only-testing:"PurpleRadio Watch AppTests"
+          -resultBundlePath TestResults.xcresult
+          CODE_SIGNING_ALLOWED=NO
+          | xcbeautify --renderer github-actions
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: TestResults
+          path: TestResults.xcresult
+          if-no-files-found: ignore
