@@ -25,6 +25,7 @@
     --accent: #9b6cff;
     --accent-ink: #ffffff;
     --live: #ff3b30;
+    --ad: #ffd60a;
     --label: #ffffff;
     --label-2: rgba(235, 235, 245, 0.6);
     --label-3: rgba(235, 235, 245, 0.35);
@@ -216,19 +217,26 @@
   /* ---------- Now playing (approximation of the system view) ---------- */
   .np-head { text-align: center; margin-top: 2px; }
   .np-head .title, .np-head .footnote {
-    max-width: 176px; margin: 0 auto;
+    max-width: calc(var(--w) - 40px); margin: 0 auto;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  /* Live label sits in the top bar's centre so it doesn't push the controls down. */
-  .live-tag {
+  /* LIVE or AD sits in the top bar's centre so it doesn't push the controls down. */
+  .np-tag {
     position: absolute; left: 50%; top: 18px; transform: translateX(-50%);
-    font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--live);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  }
+  .np-tag.live { color: var(--live); }
+  .np-tag.ad { color: #000; background: var(--ad); padding: 0 5px; border-radius: 4px; }
+  /* Channel image as Now Playing artwork, sized from the screen width. */
+  .np-art {
+    width: calc(var(--w) * 0.16); height: calc(var(--w) * 0.16);
+    margin: 0 auto 3px; font-size: 13px;
   }
   /* Controls are anchored to the screen, not to the text above, so every state lines up
      and the layout scales between 46mm and 42mm. */
   .transport {
     position: absolute; left: 0; right: 0;
-    top: calc((var(--h) - 28px) / 2); transform: translateY(-50%);
+    top: calc((var(--h) + var(--w) * 0.16 - 31px) / 2); transform: translateY(-50%);
     display: flex; justify-content: center;
   }
   .toggle {
@@ -590,6 +598,7 @@
         <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
+            <div class="avatar np-art" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
             <div class="footnote">Connecting…</div>
           </div>
@@ -610,9 +619,10 @@
 
     <figure class="mock">
       <div class="watch"><div class="screen">
-        <div class="topbar"><span class="circle-btn">‹</span><span class="live-tag">LIVE</span><span class="time">10:09</span></div>
+        <div class="topbar"><span class="circle-btn">‹</span><span class="np-tag live">LIVE</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
+            <div class="avatar np-art" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
             <div class="footnote">late night chat and a slow puzzle</div>
           </div>
@@ -625,6 +635,8 @@
         <span class="sys">NowPlayingView</span>
         <ul>
           <li>Title is the channel; subtitle is the stream title.</li>
+          <li>The channel image is the Now Playing artwork (<code>MPMediaItemPropertyArtwork</code>, watchOS 5+), if Twitch's terms permit it. Whether the watch draws it like this is to check.</li>
+          <li class="q">LIVE and AD in the top centre aren't part of <code>NowPlayingView</code>. Can a toolbar item go there on watchOS?</li>
           <li class="q">The app marks the item live with <code>MPNowPlayingInfoPropertyIsLiveStream</code> (watchOS 5+). Does the watch show a live label for it?</li>
           <li class="q">Show the category in the subtitle as well?</li>
         </ul>
@@ -633,11 +645,12 @@
 
     <figure class="mock">
       <div class="watch"><div class="screen">
-        <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
+        <div class="topbar"><span class="circle-btn">‹</span><span class="np-tag ad">AD</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
+            <div class="avatar np-art" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
-            <div class="footnote">Ad break</div>
+            <div class="footnote">late night chat and a slow puzzle</div>
           </div>
           <div class="transport"><span class="toggle pause"></span></div>
         </div>
@@ -648,9 +661,9 @@
         <strong>3. Ad break, turning the Crown</strong>
         <span class="sys">NowPlayingView</span>
         <ul>
-          <li>Ads play as served (<a href="https://github.com/ajustinjames/purple-radio/issues/22">#22</a>). While one plays, the subtitle says so.</li>
+          <li>Ads play as served (<a href="https://github.com/ajustinjames/purple-radio/issues/22">#22</a>). While one plays, AD replaces LIVE at the top.</li>
           <li>The system shows the volume by the Crown while it turns.</li>
-          <li class="q">The mini POC saw ad segments labelled <code>Amazon</code> in <code>#EXTINF</code>. Is that reliable enough to drive this subtitle?</li>
+          <li class="q">The mini POC saw ad segments labelled <code>Amazon</code> in <code>#EXTINF</code>. Is that reliable enough to drive this label?</li>
         </ul>
       </figcaption>
     </figure>
@@ -660,6 +673,7 @@
         <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
+            <div class="avatar np-art" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
             <div class="footnote">Reconnecting…</div>
           </div>
@@ -682,6 +696,7 @@
         <div class="topbar"><span class="circle-btn">‹</span><span class="time">10:09</span></div>
         <div class="body">
           <div class="np-head">
+            <div class="avatar np-art" style="background:#5b7cfa">MO</div>
             <div class="title">MossyOwl</div>
             <div class="footnote">late night chat and a slow puzzle</div>
           </div>
