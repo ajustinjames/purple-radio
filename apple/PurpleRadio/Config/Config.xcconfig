@@ -6,8 +6,9 @@
 // container's, so override the prefix rather than individual IDs.
 BUNDLE_ID_PREFIX = com.ajustinjames
 
-// Twitch application client ID (#19). Not a secret for a public client; commit it
-// here once the app is registered. The app reads it through Info.plist.
+// Twitch application client ID (#19). Leave it empty here: each developer sets
+// their own registered app's ID in Local.xcconfig, so forks don't build with ours
+// (#31). The app reads it through Info.plist and treats empty as unset.
 TWITCH_CLIENT_ID =
 
 #include? "Local.xcconfig"
