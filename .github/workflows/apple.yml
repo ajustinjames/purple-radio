@@ -38,13 +38,18 @@ jobs:
           -destination 'generic/platform=watchOS'
           CODE_SIGNING_ALLOWED=NO
 
-      # The image's watchOS runtime isn't always mounted when the job starts, and its
-      # preinstalled watch simulators show as unavailable, so create one.
+      # The image's watchOS runtime is still mounting when the job starts, so wait for
+      # it. Its preinstalled watch simulators show as unavailable, so create one.
       - name: Create a watch simulator
         run: |
-          if ! xcrun simctl list runtimes available | grep -q '^watchOS'; then
+          if ! xcrun simctl runtime list | grep -q '^watchOS'; then
             xcodebuild -downloadPlatform watchOS
           fi
+          for _ in $(seq 60); do
+            xcrun simctl list runtimes available | grep -q '^watchOS' && break
+            sleep 5
+          done
+          xcrun simctl list runtimes available
           runtime=$(xcrun simctl list runtimes available --json \
             | jq -c '[.runtimes[] | select(.platform == "watchOS")] | first')
           runtime_id=$(jq -r '.identifier' <<< "$runtime")
