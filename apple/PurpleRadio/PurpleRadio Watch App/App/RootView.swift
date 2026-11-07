@@ -4,15 +4,21 @@ struct RootView: View {
     let model: AppModel
 
     var body: some View {
-        switch model.phase {
-        case .signedOut:
-            SignInView()
-        case .signedIn:
-            FollowedStreamsView()
+        Group {
+            switch model.phase {
+            case .launching:
+                ProgressView()
+            case .signedOut:
+                SignInView(model: model.signIn)
+            case .signedIn:
+                FollowedStreamsView(onSignOut: { await model.signOut() })
+                    .task { await model.validatePeriodically() }
+            }
         }
+        .task { await model.start() }
     }
 }
 
 #Preview {
-    RootView(model: AppModel())
+    RootView(model: AppModel(auth: nil, store: KeychainTokenStore()))
 }
